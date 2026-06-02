@@ -31,7 +31,7 @@ async def connect_to_mongodb() -> None:
         await _db.oauth_tokens.create_index("health_id", unique=True, sparse=True)
         await _db.oauth_tokens.create_index("client_id")
         
-        logger.info(f"✅ Connected to MongoDB: {settings.mongodb_db_name}")
+        logger.info(f"✅ Connected to MongoDB")
         
     except Exception as e:
         logger.error(f"❌ MongoDB connection failed: {e}")

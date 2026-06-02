@@ -230,9 +230,7 @@ def get_legacy_user_id(access_token: str) -> tuple[str | None, str | None]:
     
 #     # Exemple 2: Rafraîchir tous les tokens existants
 #     results = auth_manager.refresh_all_tokens()
-#     print(f"\n📊 Résultats: {results}")
+#     print(f"\n Résultats: {results}")
     
 #     # Exemple 3: Obtenir des credentials pour un client spécifique
 #     creds = auth_manager.get_credentials("1075119846255-44cqffq8bki6th2groqm3cmpsg4s5m0k.apps.googleusercontent.com")
-#     if creds:
-#         print(f"✅ Credentials prêts pour API calls")

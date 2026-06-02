@@ -118,7 +118,7 @@ async def oauth_callback(
         )
 
         logger.info(
-            f"✅ Token exchange successful. legacy_id: {oauth_data['legacy_id']}"
+            "✅ Token exchange successful"
         )
 
     except Exception as e:
@@ -141,7 +141,7 @@ async def oauth_callback(
             oauth_data["token"]["access_token"]
         )
 
-        logger.info(f"✅ Retrieved IDs: legacy={legacy_id}, health={health_id}")
+        logger.info("✅ Retrieved IDs: legacy, health")
 
     except Exception as e:
         logger.error(f"❌ Failed to get user IDs: {e}", exc_info=True)
@@ -166,7 +166,7 @@ async def oauth_callback(
             "token": oauth_data["token"],
         }
 
-        logger.info(f"💾 Storing token for legacy_id: {legacy_id}")
+        logger.info("💾 Storing token for legacy_id")
 
         existing = await token_storage.get_token_by_legacy_id(legacy_id)
 
@@ -196,7 +196,7 @@ async def oauth_callback(
         )
 
     # === 7. Success page ===
-    logger.info(f"🎉 OAuth flow complete for legacy_id: {legacy_id}")
+    logger.info("🎉 OAuth flow complete for legacy_id")
 
     return templates.TemplateResponse(
         request,
@@ -262,22 +262,7 @@ async def revoke_token(
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No active token found for legacy_id: {legacy_id}"
+            detail="No active token found for legacy_id"
         )
     
     return None
-
-
-from fastapi.responses import JSONResponse
-
-@router.get("/health")
-async def health_endpoint():
-    db_status = await db_health_check()
-
-    status_code = (
-        200
-        if db_status["database"] == "connected"
-        else 503
-    )
-
-    return JSONResponse(content=db_status, status_code=status_code)

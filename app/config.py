@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
     model_config = SettingsConfigDict(
-        env_file=".env.example",
+        env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore"
@@ -19,11 +19,12 @@ class Settings(BaseSettings):
     
     # Application Security
     secret_key: str
-    environment: str = "production"
+    encryption_key: str  # Must be 32 bytes for Fernet
+    environment: str = "development"
     
     # MongoDB
     mongodb_uri: str
-    mongodb_db_name: str = "propsy_health"
+    mongodb_db_name: str
     
     # OAuth Redirect
     base_url: str
