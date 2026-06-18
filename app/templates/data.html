@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Health Data - Propsy Health</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 32px;
+        }
+        .data-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .data-section h2 {
+            color: #333;
+            margin-bottom: 16px;
+            font-size: 1.25rem;
+        }
+        .data-item {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .data-item h3 {
+            color: #666;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .data-item p {
+            color: #333;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 16px;
+            color: #991b1b;
+        }
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 24px;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #556cd6; }
+        pre {
+            background: #1e1e2e;
+            color: #fff;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Health Data</h1>
+        <p class="subtitle">Your health data from Google Health (last 7 days)</p>
+        
+        {% if health_data.error %}
+        <div class="error">
+            <strong>Error fetching data:</strong> {{ health_data.error }}
+        </div>
+        {% else %}
+        
+        <!-- Profile -->
+        <div class="data-section">
+            <h2>👤 Profile</h2>
+            <pre>{{ health_data.profile | tojson(indent=2) }}</pre>
+        </div>
+        
+        <!-- Activity -->
+        <div class="data-section">
+            <h2>🏃 Activity</h2>
+            {% if health_data.activity.error %}
+            <div class="error">{{ health_data.activity.error }}</div>
+            {% else %}
+            <pre>{{ health_data.activity | tojson(indent=2) }}</pre>
+            {% endif %}
+        </div>
+        
+        <!-- Sleep -->
+        <div class="data-section">
+            <h2>😴 Sleep</h2>
+            {% if health_data.sleep.error %}
+            <div class="error">{{ health_data.sleep.error }}</div>
+            {% else %}
+            <pre>{{ health_data.sleep | tojson(indent=2) }}</pre>
+            {% endif %}
+        </div>
+        
+        <!-- Heart Rate -->
+        <div class="data-section">
+            <h2>❤️ Heart Rate</h2>
+            {% if health_data.heart_rate.error %}
+            <div class="error">{{ health_data.heart_rate.error }}</div>
+            {% else %}
+            <pre>{{ health_data.heart_rate | tojson(indent=2) }}</pre>
+            {% endif %}
+        </div>
+        
+        {% endif %}
+        
+        <a href="/dashboard" class="btn">← Back to Dashboard</a>
+    </div>
+</body>
+</html>

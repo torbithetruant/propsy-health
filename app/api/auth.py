@@ -3,6 +3,8 @@ import logging
 from fastapi import APIRouter, Depends, Path, Request, HTTPException, status
 from fastapi.responses import RedirectResponse, HTMLResponse, JSONResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
+
+from app.core.session import set_user_session
 from app.core.templates import templates
 from app.database import get_database, health_check as db_health_check
 from app.auth.google_oauth import GoogleOAuthService, get_legacy_user_id
@@ -196,6 +198,8 @@ async def oauth_callback(
         )
 
     # === 7. Success page ===
+    set_user_session(request, legacy_id, health_id)
+
     logger.info("🎉 OAuth flow complete for legacy_id")
 
     return templates.TemplateResponse(

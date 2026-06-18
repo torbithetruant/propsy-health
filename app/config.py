@@ -12,6 +12,9 @@ class Settings(BaseSettings):
         case_sensitive=False,
         extra="ignore"
     )
+
+    # Application Info
+    app_name: str = "Sanpsy Health"
     
     # Google OAuth
     google_client_id: str
@@ -20,6 +23,8 @@ class Settings(BaseSettings):
     # Application Security
     secret_key: str
     encryption_key: str  # Must be 32 bytes for Fernet
+    rate_limit_window: int = 60
+    rate_limit_requests: int = 100
     environment: str = "development"
     
     # MongoDB

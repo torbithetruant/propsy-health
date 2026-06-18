@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Propsy Health</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 2rem;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 32px;
+        }
+        .user-info {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+        .user-info h3 {
+            color: #666;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+        .user-info p {
+            color: #333;
+            font-family: monospace;
+            margin-bottom: 8px;
+        }
+        .menu {
+            display: grid;
+            gap: 16px;
+        }
+        .menu-item {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .menu-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .menu-item h3 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.125rem;
+        }
+        .menu-item p {
+            color: #666;
+            font-size: 0.875rem;
+        }
+        .menu-item.danger {
+            border-color: #fecaca;
+        }
+        .menu-item.danger:hover {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+        .menu-item.danger h3 {
+            color: #dc2626;
+        }
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 24px;
+            transition: background 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn:hover { background: #556cd6; }
+        .btn-danger {
+            background: #ef4444;
+        }
+        .btn-danger:hover { background: #dc2626; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+        }
+        .modal-content h2 {
+            color: #333;
+            margin-bottom: 16px;
+        }
+        .modal-content p {
+            color: #666;
+            margin-bottom: 24px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        .btn-secondary {
+            background: #6b7280;
+        }
+        .btn-secondary:hover { background: #4b5563; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard</h1>
+        <p class="subtitle">Manage your Google Health connection</p>
+        
+        <div class="user-info">
+            <h3>Account Information</h3>
+            <p><strong>Legacy ID:</strong> {{ legacy_id }}</p>
+            <p><strong>Health ID:</strong> {{ health_id }}</p>
+        </div>
+        
+        <div class="menu">
+            <a href="/dashboard/data" class="menu-item">
+                <h3>📊 See My Data</h3>
+                <p>View your health data from Google Health (activity, sleep, heart rate, etc.)</p>
+            </a>
+            
+            <div class="menu-item" onclick="showModal('delete-data-modal')">
+                <h3>🗑️ Delete Data</h3>
+                <p>Delete all your stored data from our database. Your Google connection will remain active.</p>
+            </div>
+            
+            <div class="menu-item danger" onclick="showModal('disconnect-modal')">
+                <h3>🔌 Disconnect</h3>
+                <p>You'll need to reconnect to use the service again.</p>
+            </div>
+            
+            <div class="menu-item danger" onclick="showModal('revoke-modal')">
+                <h3>⛔ Revoke Token</h3>
+                <p>Mark your token as revoked. This is a soft delete - data remains but token becomes inactive.</p>
+            </div>
+        </div>
+        
+        <a href="/" class="btn">← Back to Home</a>
+    </div>
+    
+    <!-- Delete Data Modal -->
+    <div id="delete-data-modal" class="modal">
+        <div class="modal-content">
+            <h2>Delete All Data?</h2>
+            <p>This will permanently delete all your stored data from our database. Your Google connection will remain active, but you'll need to reconnect to continue using the service.</p>
+            <p><strong>This action cannot be undone.</strong></p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="hideModal('delete-data-modal')">Cancel</button>
+                <form action="/dashboard/delete-data" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete Data</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Disconnect Modal -->
+    <div id="disconnect-modal" class="modal">
+        <div class="modal-content">
+            <h2>Disconnect Account?</h2>
+            <p>This will disconnect your Google Health account. You'll need to go through the OAuth flow again to reconnect.</p>
+            <p><strong>This action cannot be undone.</strong></p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="hideModal('disconnect-modal')">Cancel</button>
+                <form action="/dashboard/disconnect" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Disconnect</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Revoke Modal -->
+    <div id="revoke-modal" class="modal">
+        <div class="modal-content">
+            <h2>Revoke Token?</h2>
+            <p>This will mark your token as revoked. The token will become inactive but data will remain in the database.</p>
+            <p><strong>This action cannot be undone.</strong></p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="hideModal('revoke-modal')">Cancel</button>
+                <form action="/dashboard/revoke" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Revoke Token</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+        
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>

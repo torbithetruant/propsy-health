@@ -1,24 +1,21 @@
 """FastAPI application entry point."""
-import logging
-import sys
+import signal
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
+
 from app.config import get_settings
 from app.database import connect_to_mongodb, close_mongodb
-from app.api import auth
+from app.api import auth, dashboard
+from app.core.logging import setup_logging, get_logger
+from app.core.security import setup_security
 
-# Configure logging
-logging.basicConfig(
-    level=getattr(logging, get_settings().log_level),
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)]
-)
-logger = logging.getLogger(__name__)
+# Initialize logging
+setup_logging()
+logger = get_logger(__name__)
 settings = get_settings()
 
 
@@ -26,11 +23,20 @@ settings = get_settings()
 async def lifespan(app: FastAPI):
     """Application lifespan manager for startup/shutdown events."""
     # Startup
-    logger.info("🚀 Starting Propsy Health OAuth Connector")
+    logger.info("🚀 Starting Sanpsy Health OAuth Connector")
     await connect_to_mongodb()
+    
+    # Graceful shutdown handler for Cloud Run
+    def handle_sigterm(*args):
+        logger.info("🛑 Received SIGTERM, shutting down gracefully...")
+        raise KeyboardInterrupt
+    
+    signal.signal(signal.SIGTERM, handle_sigterm)
+    
     yield
+
     # Shutdown
-    logger.info("🛑 Shutting down Propsy Health OAuth Connector")
+    logger.info("🛑 Shutting down Sanpsy Health OAuth Connector")
     await close_mongodb()
 
 
@@ -38,19 +44,21 @@ def create_app() -> FastAPI:
     """Create and configure FastAPI application."""
     
     app = FastAPI(
-        title="Propsy Health OAuth Connector",
+        title="Sanpsy Health OAuth Connector",
         description="Secure Google Health authentication service",
         version="1.0.0",
         lifespan=lifespan,
         docs_url="/docs" if not settings.is_production else None,
         redoc_url="/redoc" if not settings.is_production else None,
     )
+
+    setup_security(app)
     
     # Security Middleware
     app.add_middleware(
         SessionMiddleware,
         secret_key=settings.secret_key,
-        https_only=False,
+        https_only=settings.is_production,
         same_site="lax"
     )
     
@@ -70,6 +78,7 @@ def create_app() -> FastAPI:
     # Register routers
     app.include_router(auth.public_router)  # Public OAuth endpoints
     app.include_router(auth.router)  # API endpoints
+    app.include_router(dashboard.router)
     
     # Root redirect to homepage
     @app.get("/health")
@@ -93,14 +102,3 @@ def create_app() -> FastAPI:
 
 # Create app instance for uvicorn
 app = create_app()
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(
-        "app.main:app",
-        host="127.0.0.1",
-        port=8000,
-        reload=not settings.is_production,
-        log_level=settings.log_level.lower()
-    )
