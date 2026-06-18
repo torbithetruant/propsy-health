@@ -363,8 +363,18 @@ def setup_security(app: FastAPI):
         # Calculate duration
         duration = time.time() - start_time
         
-        # Log request (skip static files to reduce noise)
-        if not request.url.path.startswith("/static"):
+        # Define paths that are usually noisy
+        is_noisy_path = (
+            request.url.path.startswith("/static") or 
+            request.url.path == "/health" or 
+            request.url.path in ("/docs", "/redoc", "/openapi.json")
+        )
+        
+        # Only ignore these paths if the request was successful (200 OK)
+        # If it fails (e.g., 500, 503, 404), we WANT to see it in the logs
+        should_ignore = is_noisy_path and response.status_code == 200
+        
+        if not should_ignore:
             logger.info(
                 f"{request.method} {request.url.path} - "
                 f"Status: {response.status_code} - "
