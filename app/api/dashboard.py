@@ -11,6 +11,7 @@ from app.core.templates import templates
 from app.database import get_database
 from app.auth.token_storage import TokenStorageService
 from app.config import get_settings
+from app.services.health_data_storage import HealthDataStorage
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -103,15 +104,20 @@ async def delete_data(
 ):
     """
     Delete all user data from database.
-    Keeps the connection active but removes all stored data.
+    Removes both cached health records and the OAuth token.
     """
-    storage = TokenStorageService(db)
+    # Initialize both storage services
+    token_storage = TokenStorageService(db)
+    health_storage = HealthDataStorage(db)
     
-    # Delete token document
-    await storage.hard_delete_token(current_user.legacy_id)
+    # 1. Delete all cached health records
+    deleted_health_count = await health_storage.delete_all_records(current_user.legacy_id)
     
-    # Clear session
+    # 2. Delete the OAuth token document
+    await token_storage.hard_delete_token(current_user.legacy_id)
+    
+    # 3. Clear session
     clear_user_session(request)
     
-    logger.info(f"✅ All data deleted for {current_user.legacy_id}")
+    logger.info(f"✅ All data deleted for {current_user.legacy_id} ({deleted_health_count} health records removed)")
     return RedirectResponse(url="/?deleted=true", status_code=status.HTTP_303_SEE_OTHER)

@@ -1,0 +1,61 @@
+"""API routes for retrieving and caching Google Health data."""
+import logging
+from fastapi import APIRouter, Depends, HTTPException, Path
+from motor.motor_asyncio import AsyncIOMotorDatabase
+
+from app.database import get_database
+from app.core.session import get_current_user, SessionUser
+from app.services.health_data_storage import HealthDataStorage
+from app.services.token_manager import ensure_valid_token
+from app.services.health_data_fetcher import fetch_daily_health_data
+
+logger = logging.getLogger(__name__)
+router = APIRouter(prefix="/api/health-data", tags=["health-data"])
+
+@router.get("/{date}")
+async def get_health_data(
+    date: str = Path(..., description="Date in YYYY-MM-DD format", regex=r"^\d{4}-\d{2}-\d{2}$"),
+    current_user: SessionUser = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Retrieves health data for a specific date.
+    1. Checks MongoDB cache.
+    2. If missing, fetches from Google Health API, parses, saves to DB, and returns.
+    """
+    storage = HealthDataStorage(db)
+    
+    # --- 1. Check Cache ---
+    existing_record = await storage.get_record(current_user.legacy_id, date)
+    if existing_record:
+        # Remove internal MongoDB fields before returning
+        existing_record.pop("_id", None)
+        existing_record.pop("created_at", None)
+        return {"source": "database", "data": existing_record}
+        
+    # --- 2. Fetch from API ---
+    logger.info(f"📡 Data not found in DB for {current_user.legacy_id} on {date}. Fetching from Google Health API...")
+    
+    try:
+        # Ensure we have a valid access token
+        access_token = await ensure_valid_token(db, current_user.legacy_id)
+        
+        # Fetch and parse data from Google
+        parsed_data = await fetch_daily_health_data(access_token, date)
+        
+        # Save to MongoDB for future requests
+        await storage.save_record(
+            legacy_id=current_user.legacy_id,
+            health_id=current_user.health_id,
+            date=date,
+            data=parsed_data
+        )
+        
+        return {"source": "api", "data": parsed_data}
+        
+    except ValueError as e:
+        logger.error(f"Authentication error: {e}")
+        raise HTTPException(status_code=401, detail=str(e))
+    except Exception as e:
+        logger.error(f"Error fetching health data: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to fetch health data from Google.")

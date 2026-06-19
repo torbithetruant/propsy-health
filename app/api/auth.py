@@ -18,7 +18,9 @@ router = APIRouter(prefix="/api", tags=["authentication"])
 public_router = APIRouter(tags=["public"])
 
 # Initialize services
-oauth_service = GoogleOAuthService()
+client_secrets_path = (settings.google_secret_file_prod if settings.is_production else settings.google_secret_file_test)
+
+oauth_service = GoogleOAuthService(client_secrets_path=client_secrets_path)
 SESSION_STATE_KEY = "oauth_state"
 
 

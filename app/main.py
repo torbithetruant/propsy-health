@@ -9,7 +9,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.config import get_settings
 from app.database import connect_to_mongodb, close_mongodb
-from app.api import auth, dashboard
+from app.api import auth, dashboard, health_data
 from app.core.logging import setup_logging, get_logger
 from app.core.security import setup_security
 
@@ -79,6 +79,7 @@ def create_app() -> FastAPI:
     app.include_router(auth.public_router)  # Public OAuth endpoints
     app.include_router(auth.router)  # API endpoints
     app.include_router(dashboard.router)
+    app.include_router(health_data.router)
     
     # Root redirect to homepage
     @app.get("/health")
@@ -108,7 +109,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "app.main:app",
         host="127.0.0.1",
-        port=8000,
+        port=8080,
         reload=not settings.is_production,
         log_level=settings.log_level.lower()
     )

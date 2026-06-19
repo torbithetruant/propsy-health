@@ -36,7 +36,7 @@ class GoogleOAuthService:
     authorization_url() and fetch_token() pattern.
     """
     
-    def __init__(self, client_secrets_path: str = "client_secret/client_secret.json"):
+    def __init__(self, client_secrets_path: str):
         self.client_secrets_path = client_secrets_path
         self.scopes = settings.google_health_scopes
     

@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     # Google OAuth
     google_client_id: str
     google_client_secret: str
+
+    google_secret_file_test: str
+    google_secret_file_prod: str
     
     # Application Security
     secret_key: str
