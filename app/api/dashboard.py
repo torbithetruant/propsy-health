@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, Request, HTTPException, status
 from fastapi.responses import RedirectResponse, HTMLResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from app.core.session import get_current_user, SessionUser, clear_user_session
+from app.core.session import SessionUser, clear_user_session, get_current_user_with_consent
 from app.core.templates import templates
 from app.database import get_database
 from app.auth.token_storage import TokenStorageService
@@ -22,7 +22,7 @@ router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 @router.get("/", response_class=HTMLResponse)
 async def dashboard_home(
     request: Request,
-    current_user: SessionUser = Depends(get_current_user)
+    current_user: SessionUser = Depends(get_current_user_with_consent)
 ):
     """Main dashboard page with menu."""
     return templates.TemplateResponse(
@@ -38,7 +38,7 @@ async def dashboard_home(
 @router.get("/data", response_class=HTMLResponse)
 async def view_my_data(
     request: Request,
-    current_user: SessionUser = Depends(get_current_user),
+    current_user: SessionUser = Depends(get_current_user_with_consent),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """View Google Health data."""
@@ -58,7 +58,7 @@ async def view_my_data(
 @router.post("/disconnect")
 async def disconnect_account(
     request: Request,
-    current_user: SessionUser = Depends(get_current_user),
+    current_user: SessionUser = Depends(get_current_user_with_consent),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -74,7 +74,7 @@ async def disconnect_account(
 @router.post("/revoke")
 async def revoke_token(
     request: Request,
-    current_user: SessionUser = Depends(get_current_user),
+    current_user: SessionUser = Depends(get_current_user_with_consent),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -96,28 +96,23 @@ async def revoke_token(
         )
 
 
-@router.post("/delete-data")
-async def delete_data(
+@router.post("/withdraw")
+async def withdraw_from_study(
     request: Request,
-    current_user: SessionUser = Depends(get_current_user),
+    current_user: SessionUser = Depends(get_current_user_with_consent),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
-    Delete all user data from database.
-    Removes both cached health records and the OAuth token.
+    Redirect to withdrawal confirmation page. If confirmed, deletes all data and revokes token.
+    This is the GDPR Article 17 "Right to Erasure" implementation.
     """
-    # Initialize both storage services
-    token_storage = TokenStorageService(db)
-    health_storage = HealthDataStorage(db)
     
-    # 1. Delete all cached health records
-    deleted_health_count = await health_storage.delete_all_records(current_user.legacy_id)
-    
-    # 2. Delete the OAuth token document
-    await token_storage.hard_delete_token(current_user.legacy_id)
-    
-    # 3. Clear session
-    clear_user_session(request)
-    
-    logger.info(f"✅ All data deleted for {current_user.legacy_id} ({deleted_health_count} health records removed)")
-    return RedirectResponse(url="/?deleted=true", status_code=status.HTTP_303_SEE_OTHER)
+    logger.info(f"Initiating withdrawal process for {current_user.legacy_id}")
+    return templates.TemplateResponse(
+        request,
+        "withdraw.html",
+        {
+            "legacy_id": current_user.legacy_id,
+            "health_id": current_user.health_id,
+        }
+    )

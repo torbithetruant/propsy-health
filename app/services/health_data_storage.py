@@ -1,7 +1,9 @@
 """MongoDB storage service for daily health records."""
+import json
 import logging
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
+from app.core.encryption import encrypt
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +23,18 @@ class HealthDataStorage:
         
     async def save_record(self, legacy_id: str, health_id: str, date: str, data: dict):
         """Save or update a health record in the database."""
+
+        # Encrypt Tier 2 sensitive fields
+        if data :
+            if data.get("raw_heart_rate"):
+                data["raw_heart_rate"] = encrypt(json.dumps(data["raw_heart_rate"]))
+            if data.get("raw_sleep"):
+                data["raw_sleep"] = encrypt(json.dumps(data["raw_sleep"]))
+            if data.get("sleep_start"):
+                data["sleep_start"] = encrypt(data["sleep_start"])
+            if data.get("sleep_end"):
+                data["sleep_end"] = encrypt(data["sleep_end"])
+
         record = {
             "legacy_id": legacy_id,
             "health_id": health_id,

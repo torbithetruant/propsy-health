@@ -1,10 +1,12 @@
 """API routes for retrieving and caching Google Health data."""
 import logging
+import json
 from fastapi import APIRouter, Depends, HTTPException, Path
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.database import get_database
-from app.core.session import get_current_user, SessionUser
+from app.core.session import SessionUser, get_current_user_with_consent
+from app.core.encryption import decrypt
 from app.services.health_data_storage import HealthDataStorage
 from app.services.token_manager import ensure_valid_token
 from app.services.health_data_fetcher import fetch_daily_health_data
@@ -15,7 +17,7 @@ router = APIRouter(prefix="/api/health-data", tags=["health-data"])
 @router.get("/{date}")
 async def get_health_data(
     date: str = Path(..., description="Date in YYYY-MM-DD format", regex=r"^\d{4}-\d{2}-\d{2}$"),
-    current_user: SessionUser = Depends(get_current_user),
+    current_user: SessionUser = Depends(get_current_user_with_consent),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -31,6 +33,17 @@ async def get_health_data(
         # Remove internal MongoDB fields before returning
         existing_record.pop("_id", None)
         existing_record.pop("created_at", None)
+
+        # Decrypt Tier 2 sensitive fields before returning
+        if existing_record.get("raw_heart_rate"):
+            existing_record["raw_heart_rate"] = json.loads(decrypt(existing_record["raw_heart_rate"]))
+        if existing_record.get("raw_sleep"):
+            existing_record["raw_sleep"] = json.loads(decrypt(existing_record["raw_sleep"]))
+        if existing_record.get("sleep_start"):
+            existing_record["sleep_start"] = decrypt(existing_record["sleep_start"])
+        if existing_record.get("sleep_end"):
+            existing_record["sleep_end"] = decrypt(existing_record["sleep_end"])
+
         return {"source": "database", "data": existing_record}
         
     # --- 2. Fetch from API ---
@@ -42,13 +55,15 @@ async def get_health_data(
         
         # Fetch and parse data from Google
         parsed_data = await fetch_daily_health_data(access_token, date)
+
+        copy_of_parsed_data = parsed_data.copy()
         
         # Save to MongoDB for future requests
         await storage.save_record(
             legacy_id=current_user.legacy_id,
             health_id=current_user.health_id,
             date=date,
-            data=parsed_data
+            data=copy_of_parsed_data
         )
         
         return {"source": "api", "data": parsed_data}

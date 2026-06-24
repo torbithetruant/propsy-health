@@ -204,71 +204,70 @@ async def oauth_callback(
 
     logger.info("🎉 OAuth flow complete for legacy_id")
 
-    return templates.TemplateResponse(
-        request,
-        "success.html",
-        {
-            "legacy_id": legacy_id,
-            "health_id": health_id,
-        },
-    )
+    return RedirectResponse(url="/consent", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@public_router.get("/privacy", response_class=HTMLResponse)
+async def privacy_policy(request: Request):
+    """Render the Privacy Policy page (Required for Google OAuth Verification)."""
+    return templates.TemplateResponse(request, "privacy.html", {})
 
 
 # ============================================================================
 # Token Management API (Protected - add authentication middleware as needed)
 # ============================================================================
 
-@router.get("/tokens")
-async def list_tokens(
-    limit: int = 100,
-    db: AsyncIOMotorDatabase = Depends(get_database)
-):
-    """List all active token documents (excluding sensitive fields)."""
-    token_storage = TokenStorageService(db)
-    tokens = await token_storage.get_all_tokens(limit=limit)
-    return {"count": len(tokens), "tokens": tokens}
-
-
-@router.get("/tokens/{legacy_id}")
-async def get_token(
-    legacy_id: str,
-    db: AsyncIOMotorDatabase = Depends(get_database)
-):
-    """Retrieve token document by legacy_id."""
-    token_storage = TokenStorageService(db)
-    token = await token_storage.get_token_by_legacy_id(legacy_id)
-    
-    if not token:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No token found for legacy_id: {legacy_id}"
-        )
-    
-    # Return token without sensitive fields in list view
-    safe_token = token.copy()
-    if "token" in safe_token:
-        safe_token["token"] = {
-            "token_type": safe_token["token"].get("token_type"),
-            "scopes": safe_token["token"].get("scopes"),
-            "expires_at": safe_token["token"].get("expires_at"),
-        }
-    
-    return safe_token
-
-
-@router.delete("/tokens/{legacy_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def revoke_token(
-    legacy_id: str,
-    db: AsyncIOMotorDatabase = Depends(get_database)
-):
-    """Soft-delete (revoke) a token document."""
-    token_storage = TokenStorageService(db)
-    success = await token_storage.delete_token(legacy_id)
-    
-    if not success:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No active token found for legacy_id"
-        )
-    
-    return None
+#@router.get("/tokens")
+#async def list_tokens(
+#    limit: int = 100,
+#    db: AsyncIOMotorDatabase = Depends(get_database)
+#):
+#    """List all active token documents (excluding sensitive fields)."""
+#    token_storage = TokenStorageService(db)
+#    tokens = await token_storage.get_all_tokens(limit=limit)
+#    return {"count": len(tokens), "tokens": tokens}
+#
+#
+#@router.get("/tokens/{legacy_id}")
+#async def get_token(
+#    legacy_id: str,
+#    db: AsyncIOMotorDatabase = Depends(get_database)
+#):
+#    """Retrieve token document by legacy_id."""
+#    token_storage = TokenStorageService(db)
+#    token = await token_storage.get_token_by_legacy_id(legacy_id)
+#    
+#    if not token:
+#        raise HTTPException(
+#            status_code=status.HTTP_404_NOT_FOUND,
+#            detail=f"No token found for legacy_id: {legacy_id}"
+#        )
+#    
+#    # Return token without sensitive fields in list view
+#    safe_token = token.copy()
+#    if "token" in safe_token:
+#        safe_token["token"] = {
+#            "token_type": safe_token["token"].get("token_type"),
+#            "scopes": safe_token["token"].get("scopes"),
+#            "expires_at": safe_token["token"].get("expires_at"),
+#        }
+#    
+#    return safe_token
+#
+#
+#@router.delete("/tokens/{legacy_id}", status_code=status.HTTP_204_NO_CONTENT)
+#async def revoke_token(
+#    legacy_id: str,
+#    db: AsyncIOMotorDatabase = Depends(get_database)
+#):
+#    """Soft-delete (revoke) a token document."""
+#    token_storage = TokenStorageService(db)
+#    success = await token_storage.delete_token(legacy_id)
+#    
+#    if not success:
+#        raise HTTPException(
+#            status_code=status.HTTP_404_NOT_FOUND,
+#            detail="No active token found for legacy_id"
+#        )
+#    
+#    return None

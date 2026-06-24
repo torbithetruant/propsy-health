@@ -22,9 +22,14 @@ async def ensure_valid_token(db: AsyncIOMotorDatabase, legacy_id: str) -> str:
     
     if not token_doc:
         raise ValueError("No token found for user.")
+    
+    # 0. Check if token is not revoked
+    if token_doc.get("status") == "revoked":
+        raise ValueError("Token has been revoked. Re-authentication required.")
         
     token_info = token_doc["token"]
     expires_at_str = token_info.get("expires_at")
+
     
     # 1. Check if token is still valid (with 5 min buffer)
     if expires_at_str:
@@ -43,7 +48,7 @@ async def ensure_valid_token(db: AsyncIOMotorDatabase, legacy_id: str) -> str:
     if not refresh_token:
         raise ValueError("No refresh token available. Re-authentication required.")
         
-    logger.info(f"🔄 Token expired for {legacy_id}. Attempting refresh...")
+    logger.info(f"Token expired for {legacy_id}. Attempting refresh...")
     try:
         # We use the client_secret from settings, NOT from the DB (for security)
         creds = Credentials(
@@ -64,9 +69,9 @@ async def ensure_valid_token(db: AsyncIOMotorDatabase, legacy_id: str) -> str:
         new_token_info["expires_at"] = creds.expiry.isoformat() if creds.expiry else None
         
         await storage.update_token(legacy_id, {"token": new_token_info})
-        logger.info(f"✅ Token refreshed successfully for {legacy_id}")
+        logger.info(f"Token refreshed successfully for {legacy_id}")
         return creds.token
         
     except google.auth.exceptions.RefreshError as e:
-        logger.error(f"❌ Refresh failed for {legacy_id}: {e}")
+        logger.error(f"Refresh failed for {legacy_id}: {e}")
         raise ValueError("Token refresh failed. The user must reconnect their account.")

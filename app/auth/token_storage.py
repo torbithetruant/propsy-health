@@ -78,9 +78,9 @@ class TokenStorageService:
                         # Check if already encrypted (Fernet tokens start with gAAAA)
                         if not token[field].startswith("gAAAA"):
                             token[field] = encrypt(token[field])
-                            logger.debug(f"🔐 Encrypted {field} for legacy_id: {result.get('legacy_id')}")
+                            logger.debug(f"Encrypted {field} for legacy_id: {result.get('legacy_id')}")
                     except Exception as e:
-                        logger.error(f"❌ Failed to encrypt {field}: {e}")
+                        logger.error(f"Failed to encrypt {field}: {e}")
                         raise
             
             result["token"] = token
@@ -109,12 +109,12 @@ class TokenStorageService:
                         # Only decrypt if it looks encrypted (Fernet format)
                         if token[field].startswith("gAAAA"):
                             token[field] = decrypt(token[field])
-                            logger.debug(f"🔓 Decrypted {field} for legacy_id: {result.get('legacy_id')}")
+                            logger.debug(f"Decrypted {field} for legacy_id: {result.get('legacy_id')}")
                     except ValueError:
                         # Field might be plaintext or corrupted - leave as-is
-                        logger.warning(f"⚠️ Could not decrypt {field} (may be plaintext)")
+                        logger.warning(f"Could not decrypt {field} (may be plaintext)")
                     except Exception as e:
-                        logger.error(f"❌ Unexpected error decrypting {field}: {e}")
+                        logger.error(f"Unexpected error decrypting {field}: {e}")
                         raise
             
             result["token"] = token
@@ -135,7 +135,7 @@ class TokenStorageService:
         encrypted_doc.setdefault("status", "active")
         
         result = await self.collection.insert_one(encrypted_doc)
-        logger.info(f"✅ Token stored (encrypted fields) for legacy_id: {token_document.get('legacy_id')}")
+        logger.info(f"Token stored (encrypted fields) for legacy_id: {token_document.get('legacy_id')}")
         return result.inserted_id
     
     async def get_token_by_legacy_id(self, legacy_id: str) -> dict | None:
@@ -198,7 +198,7 @@ class TokenStorageService:
         )
         
         if result.modified_count > 0:
-            logger.info(f"🔄 Token updated (encrypted fields) for legacy_id: {legacy_id}")
+            logger.info(f"Token updated (encrypted fields) for legacy_id: {legacy_id}")
         return result.modified_count > 0
     
     async def delete_token(self, legacy_id: str) -> bool:
@@ -210,13 +210,13 @@ class TokenStorageService:
                 "revoked_at": datetime.now(timezone.utc).isoformat()
             }}
         )
-        logger.info(f"✅ Token revoked for legacy_id: {legacy_id}")
+        logger.info(f"Token revoked for legacy_id: {legacy_id}")
         return result.modified_count > 0
     
     async def hard_delete_token(self, legacy_id: str) -> bool:
         """Permanently delete a token document."""
         result = await self.collection.delete_one({"legacy_id": legacy_id})
-        logger.warning(f"⚠️ Token permanently deleted for legacy_id: {legacy_id}")
+        logger.warning(f"Token permanently deleted for legacy_id: {legacy_id}")
         return result.deleted_count > 0
     
     # ========================================================================

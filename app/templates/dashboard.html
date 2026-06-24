@@ -161,11 +161,6 @@
                 <p>View your health data from Google Health (activity, sleep, heart rate, etc.)</p>
             </a>
             
-            <div class="menu-item" onclick="showModal('delete-data-modal')">
-                <h3>🗑️ Delete Data</h3>
-                <p>Delete all your stored data from our database. Your Google connection will remain active.</p>
-            </div>
-            
             <div class="menu-item danger" onclick="showModal('disconnect-modal')">
                 <h3>🔌 Disconnect</h3>
                 <p>You'll need to reconnect to use the service again.</p>
@@ -175,21 +170,26 @@
                 <h3>⛔ Revoke Token</h3>
                 <p>Mark your token as revoked. This is a soft delete - data remains but token becomes inactive.</p>
             </div>
+
+            <div class="menu-item" onclick="showModal('delete-data-modal')">
+                <h3>🗑️ Withdraw from Study</h3>
+                <p>Delete all your stored data from our database. Your Google connection will remain active.</p>
+            </div>
         </div>
         
         <a href="/" class="btn">← Back to Home</a>
     </div>
     
-    <!-- Delete Data Modal -->
+    <!-- Withdraw from Study Modal -->
     <div id="delete-data-modal" class="modal">
         <div class="modal-content">
-            <h2>Delete All Data?</h2>
-            <p>This will permanently delete all your stored data from our database. Your Google connection will remain active, but you'll need to reconnect to continue using the service.</p>
+            <h2>Withdraw from Study ?</h2>
+            <p>This will permanently delete all your stored data from our database.</p>
             <p><strong>This action cannot be undone.</strong></p>
             <div class="modal-buttons">
                 <button class="btn btn-secondary" onclick="hideModal('delete-data-modal')">Cancel</button>
-                <form action="/dashboard/delete-data" method="POST" style="display: inline;">
-                    <button type="submit" class="btn btn-danger">Delete Data</button>
+                <form action="/dashboard/withdraw" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Withdraw from Study</button>
                 </form>
             </div>
         </div>
@@ -198,7 +198,7 @@
     <!-- Disconnect Modal -->
     <div id="disconnect-modal" class="modal">
         <div class="modal-content">
-            <h2>Disconnect Account?</h2>
+            <h2>Disconnect Account ?</h2>
             <p>This will disconnect your Google Health account. You'll need to go through the OAuth flow again to reconnect.</p>
             <p><strong>This action cannot be undone.</strong></p>
             <div class="modal-buttons">
@@ -213,7 +213,7 @@
     <!-- Revoke Modal -->
     <div id="revoke-modal" class="modal">
         <div class="modal-content">
-            <h2>Revoke Token?</h2>
+            <h2>Revoke Token ?</h2>
             <p>This will mark your token as revoked. The token will become inactive but data will remain in the database.</p>
             <p><strong>This action cannot be undone.</strong></p>
             <div class="modal-buttons">

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informed Consent - Propsy Health Research</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f4f7f6;
+            color: #333;
+            line-height: 1.7;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 24px;
+            margin-bottom: 32px;
+        }
+        .header h1 { color: #2c3e50; font-size: 1.8rem; margin-bottom: 8px; }
+        .header .subtitle { color: #7f8c8d; font-size: 0.95rem; }
+        .version-badge {
+            display: inline-block;
+            background: #e8f4f8;
+            color: #2980b9;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .section {
+            margin-bottom: 32px;
+            padding: 20px 24px;
+            background: #fafbfc;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        .section h2 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section h2 .icon { font-size: 1.3rem; }
+        .section p, .section ul { color: #555; margin-bottom: 12px; }
+        .section ul { padding-left: 24px; }
+        .section li { margin-bottom: 8px; }
+        
+        .highlight {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+        .highlight strong { color: #856404; }
+        
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+        
+        /* Signature Section */
+        .signature-section {
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 32px 0;
+        }
+        .signature-section h2 {
+            color: #2c3e50;
+            margin-bottom: 16px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 16px 0;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            margin-top: 4px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .checkbox-group label {
+            color: #333;
+            cursor: pointer;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #556cd6; }
+        .btn-primary:disabled { background: #9ca3af; cursor: not-allowed; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .btn-secondary:hover { background: #4b5563; }
+        .btn-outline {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        .btn-outline:hover { background: #f0f4ff; }
+        
+        .footer-note {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.85rem;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 24px; }
+            .btn-group { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+        
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; padding: 0; }
+            .btn-group, .signature-section { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Informed Consent for Health Research</h1>
+            <p class="subtitle">Propsy Health Data Synchronization Study</p>
+            <span class="version-badge">Consent Form Version {{ consent_version }}</span>
+        </div>
+        
+        <p style="margin-bottom: 24px; color: #555;">
+            <strong>Please read this document carefully before proceeding.</strong> 
+            It explains what this study involves, why it is being conducted, and what will happen to your data. 
+            You may save or print this page at any time using your browser's print function (Ctrl+P / Cmd+P).
+        </p>
+        
+        <!-- 1. Nature, Purpose, and Duration -->
+        <div class="section">
+            <h2><span class="icon">🎯</span> 1. Nature, Purpose, and Duration of the Research</h2>
+            <p><strong>What is this study?</strong> This is a health data synchronization study that collects daily fitness, sleep, and heart rate metrics from your Google Health account to provide you with a personal health dashboard.</p>
+            <p><strong>Purpose:</strong> To help you visualize and understand your personal health trends over time, including activity levels, sleep quality, and cardiovascular metrics.</p>
+            <p><strong>Duration:</strong> Your participation continues for as long as your Google Health account remains connected. You may withdraw at any time without penalty.</p>
+        </div>
+        
+        <!-- 2. Risks and Benefits -->
+        <div class="section">
+            <h2><span class="icon">⚖️</span> 2. Risks and Benefits to You as a Participant</h2>
+            <p><strong>Benefits:</strong></p>
+            <ul>
+                <li>Access to a personalized health dashboard showing your daily metrics</li>
+                <li>Visualization of sleep stages, heart rate trends, and activity patterns</li>
+                <li>Historical tracking of your health data over time</li>
+            </ul>
+            <p><strong>Risks:</strong></p>
+            <ul>
+                <li><strong>Privacy risk:</strong> As with any digital health service, there is a small risk of data breach despite our security measures.</li>
+                <li><strong>Emotional risk:</strong> Viewing health data may cause anxiety for some individuals.</li>
+                <li><strong>No medical advice:</strong> This dashboard is for informational purposes only and does not provide medical diagnosis or treatment.</li>
+            </ul>
+            <div class="highlight">
+                <strong>⚠️ Important:</strong> This tool is NOT a medical device. Always consult a qualified healthcare professional for medical decisions.
+            </div>
+        </div>
+        
+        <!-- 3. Privacy, Security, Data Handling -->
+        <div class="section">
+            <h2><span class="icon">🔒</span> 3. Privacy, Security, and Data Handling Measures</h2>
+            <p>We implement industry-standard security measures to protect your data:</p>
+            <ul>
+                <li><strong>Encryption at rest:</strong> Your OAuth tokens and raw biometric data (heart rate samples, sleep stages) are encrypted using AES-256 (Fernet) before being stored in our database.</li>
+                <li><strong>Encryption in transit:</strong> All data transmitted between your device, our servers, and Google's APIs is protected with TLS/SSL (HTTPS).</li>
+                <li><strong>Access controls:</strong> Only authorized backend services can access decryption keys. No human at Propsy Health can view your raw health data.</li>
+                <li><strong>Data minimization:</strong> We only collect the specific health metrics you explicitly consent to (steps, calories, heart rate, sleep).</li>
+                <li><strong>No third-party sharing:</strong> Your data is never sold, rented, or shared with third parties.</li>
+            </ul>
+            <div class="info-box">
+                <strong>🔗 Google API Limited Use:</strong> Propsy Health's use of information received from Google APIs adheres to the 
+                <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank">Google API Services User Data Policy</a>, 
+                including the Limited Use requirements.
+            </div>
+        </div>
+        
+        <!-- 4. Point of Contact -->
+        <div class="section">
+            <h2><span class="icon">📧</span> 4. Point of Contact for Questions</h2>
+            <p>If you have any questions, concerns, or complaints about this study or your data, please contact:</p>
+            <ul>
+                <li><strong>Propsy Health Research Team</strong></li>
+                <li>Email: <a href="mailto:research@your-domain.com">research@your-domain.com</a></li>
+                <li>Privacy Officer: <a href="mailto:privacy@your-domain.com">privacy@your-domain.com</a></li>
+                <li>Response time: We commit to responding within 5 business days.</li>
+            </ul>
+        </div>
+        
+        <!-- 5. Retention Periods -->
+        <div class="section">
+            <h2><span class="icon">📅</span> 5. Data Retention Periods</h2>
+            <p>Your data is retained according to the following schedule:</p>
+            <ul>
+                <li><strong>Active participation:</strong> Your health data is retained for the entire duration of your participation in the study.</li>
+                <li><strong>After withdrawal:</strong> Upon withdrawal, all your health data is permanently deleted within 30 days.</li>
+                <li><strong>OAuth tokens:</strong> Access and refresh tokens are deleted immediately upon disconnection.</li>
+                <li><strong>Audit logs:</strong> Minimal audit logs (without health data) may be retained for up to 12 months for security purposes.</li>
+            </ul>
+        </div>
+        
+        <!-- 6. How to Withdraw -->
+        <div class="section">
+            <h2><span class="icon">🚪</span> 6. How to Withdraw from the Study</h2>
+            <p>You may withdraw from this study at any time, for any reason, without penalty. To withdraw:</p>
+            <ol style="padding-left: 24px; margin: 12px 0;">
+                <li>Log in to your Propsy Health Dashboard</li>
+                <li>Click on <strong>"Disconnect"</strong> or <strong>"Withdraw from Study"</strong></li>
+                <li>Confirm your withdrawal</li>
+                <li>Your data will be deleted and your Google access revoked</li>
+            </ol>
+            <p>Alternatively, you can revoke our access directly from your 
+            <a href="https://myaccount.google.com/permissions" target="_blank">Google Account Permissions page</a>.</p>
+        </div>
+        
+        <!-- 7. How to Delete Data -->
+        <div class="section">
+            <h2><span class="icon">🗑️</span> 7. How to Delete Your Data</h2>
+            <p>You have the right to delete your data at any point during the study:</p>
+            <ul>
+                <li><strong>From the Dashboard:</strong> Click "Delete Data" to remove all cached health records while keeping your connection active.</li>
+                <li><strong>Full Deletion:</strong> Click "Disconnect" to revoke Google access AND delete all data from our servers.</li>
+                <li><strong>After study completion:</strong> Even if data has been aggregated for research purposes, your individual records can be deleted upon request by emailing <a href="mailto:privacy@your-domain.com">privacy@your-domain.com</a>.</li>
+            </ul>
+            <div class="highlight">
+                <strong>📌 Note:</strong> This study does NOT make your data publicly accessible. All data remains private to your account and is deleted upon request.
+            </div>
+        </div>
+        
+        <!-- 8. Additional Documents -->
+        <div class="section">
+            <h2><span class="icon">📄</span> 8. Additional Documents and Information</h2>
+            <p>The following documents are available upon request:</p>
+            <ul>
+                <li>Full Privacy Policy: <a href="/privacy" target="_blank">/privacy</a></li>
+                <li>Terms of Service: <a href="/terms" target="_blank">/terms</a></li>
+                <li>IRB/EC Approval Documentation: Available by emailing <a href="mailto:research@your-domain.com">research@your-domain.com</a></li>
+                <li>Data Processing Agreement: Available upon request</li>
+            </ul>
+        </div>
+        
+        <!-- Signature Section - Simplified -->
+        <form method="POST" action="/consent" id="consent-form">
+            <div class="signature-section">
+                <h2>✍️ Your Consent</h2>
+                <p style="margin-bottom: 16px; color: #555;">
+                    By checking the boxes below, you acknowledge that you have read and understood this Informed Consent document, 
+                    that you have had the opportunity to ask questions, and that you voluntarily agree to participate in this study.
+                </p>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="consent_read" name="consent_read" required>
+                    <label for="consent_read">
+                        I confirm that I have read and understood this Informed Consent document in its entirety.
+                    </label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="consent_voluntary" name="consent_voluntary" required>
+                    <label for="consent_voluntary">
+                        I understand that my participation is voluntary and that I may withdraw at any time without penalty.
+                    </label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="consent_data" name="consent_data" required>
+                    <label for="consent_data">
+                        I consent to Propsy Health accessing, storing, and processing my Google Health data as described above.
+                    </label>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="submit-btn" disabled>
+                        ✅ I Agree — Continue to Dashboard
+                    </button>
+                    <button type="button" class="btn btn-outline" onclick="window.print()">
+                        🖨️ Save / Print Copy
+                    </button>
+                    <a href="/" class="btn btn-secondary">
+                        ❌ Decline & Return Home
+                    </a>
+                </div>
+            </div>
+        </form>
+        
+        <div class="footer-note">
+            <p>📅 Date of consent: <span id="current-date"></span></p>
+            <p>🔐 Your consent is recorded securely with timestamp and IP address for audit purposes.</p>
+            <p style="margin-top: 12px;">
+                <a href="/privacy">Privacy Policy</a> · 
+                <a href="/terms">Terms of Service</a> · 
+                <a href="mailto:research@your-domain.com">Contact Research Team</a>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Display current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+            year: 'numeric', month: 'long', day: 'numeric'
+        });
+        
+        // Enable submit button only when all required checkboxes are checked
+        const checkboxes = document.querySelectorAll('input[type="checkbox"][required]');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        function validateForm() {
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            submitBtn.disabled = !allChecked;
+        }
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', validateForm);
+        });
+        
+        // Initial validation
+        validateForm();
+    </script>
+</body>
+</html>

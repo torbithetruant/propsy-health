@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Propsy Health OAuth Connector</title>
+    <title>Propsy Health - Secure Health Data Synchronization</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -11,6 +11,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
@@ -19,21 +20,34 @@
             background: white;
             border-radius: 16px;
             padding: 40px;
-            max-width: 500px;
+            max-width: 600px;
             width: 100%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             text-align: center;
         }
-        h1 {
-            color: #333;
-            margin-bottom: 16px;
-            font-size: 1.5rem;
-        }
-        p {
-            color: #666;
+        h1 { color: #333; margin-bottom: 16px; font-size: 1.8rem; }
+        .description { color: #555; margin-bottom: 32px; line-height: 1.6; font-size: 1.05rem; }
+        
+        .features {
+            text-align: left;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 24px;
             margin-bottom: 32px;
-            line-height: 1.5;
         }
+        .features h3 { color: #333; margin-bottom: 16px; font-size: 1.1rem; }
+        .features ul { list-style: none; padding: 0; }
+        .features li {
+            color: #555;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .features li:last-child { border-bottom: none; }
+        .features li::before { content: "✅"; font-size: 1.1rem; }
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -48,36 +62,49 @@
             border: none;
             cursor: pointer;
             font-size: 1rem;
+            margin-bottom: 24px;
         }
-        .btn:hover {
-            background: #3367d6;
-            transform: translateY(-1px);
-        }
-        .btn:active {
-            transform: translateY(0);
-        }
-        .btn svg {
-            width: 20px;
-            height: 20px;
-        }
+        .btn:hover { background: #3367d6; transform: translateY(-1px); }
+        .btn svg { width: 20px; height: 20px; }
+        
         .footer {
-            margin-top: 32px;
-            color: #999;
-            font-size: 0.875rem;
+            margin-top: 16px;
+            color: #888;
+            font-size: 0.85rem;
+            line-height: 1.8;
         }
+        .footer a { color: #667eea; text-decoration: none; font-weight: 500; }
+        .footer a:hover { text-decoration: underline; }
+        
         @media (prefers-color-scheme: dark) {
             body { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
             .container { background: #1e1e2e; }
             h1 { color: #fff; }
-            p { color: #aaa; }
-            .footer { color: #666; }
+            .description { color: #ccc; }
+            .features { background: #2a2a4a; }
+            .features h3 { color: #fff; }
+            .features li { color: #ccc; border-color: #444; }
+            .footer { color: #888; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Propsy Health OAuth Connector</h1>
-        <p>Connect a Google Health account to authorize synchronization of your fitness and health data.</p>
+        <h1>Propsy Health Connector</h1>
+        <p class="description">
+            Securely synchronize your daily fitness, sleep, and health metrics from Google Health to the Propsy platform. 
+            We provide a private dashboard to visualize your well-being over time.
+        </p>
+        
+        <div class="features">
+            <h3>What you can do:</h3>
+            <ul>
+                <li>View daily step counts, calories, and active wear time</li>
+                <li>Analyze sleep stages (Deep, Light, REM) and efficiency</li>
+                <li>Track heart rate trends and resting metrics</li>
+                <li>Revoke access and delete your data at any time</li>
+            </ul>
+        </div>
         
         <a href="/login" class="btn">
             <svg viewBox="0 0 24 24" fill="currentColor">
@@ -90,8 +117,12 @@
         </a>
         
         <div class="footer">
-            <p>🔒 Secure OAuth 2.0 authentication</p>
-            <p>Your data is stored encrypted and never shared</p>
+            <p>🔒 Secure OAuth 2.0 authentication with AES-256 encryption at rest.</p>
+            <p>
+                By connecting, you agree to our 
+                <a href="/privacy">Privacy Policy</a> and 
+                <a href="/privacy">Terms of Service</a>.
+            </p>
         </div>
     </div>
 </body>

@@ -308,7 +308,7 @@ def setup_security(app: FastAPI):
             return await call_next(request)
             
         # Skip CSRF for OAuth callback (uses state parameter instead)
-        if request.url.path in ("/oauth/callback", "/login"):
+        if request.url.path in ("/oauth/callback", "/login", "/consent", "/consent/withdraw"):
             return await call_next(request)
         
         # Skip CSRF for API endpoints

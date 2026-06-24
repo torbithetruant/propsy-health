@@ -116,11 +116,17 @@ def _parse_heart_rate(data: dict) -> dict:
         "raw_heart_rate": raw_points
     }
 
+
 def _parse_sleep(data_points: list) -> dict:
+    """
+    Parses sleep data using the pre-calculated 'summary' field provided by the Google Health API.
+    This is much more accurate and faster than manually iterating through the raw 'stages' array.
+    """
     if not data_points:
         return {}
         
-    total_duration = 0
+    total_in_bed = 0
+    total_asleep = 0
     deep = 0
     light = 0
     rem = 0
@@ -130,39 +136,62 @@ def _parse_sleep(data_points: list) -> dict:
     raw_sessions = []
     
     for dp in data_points:
-        sleep_data = dp.get("sleep", {})
-        raw_sessions.append(sleep_data)
+        # The API returns the sleep data directly in the dataPoint, not nested under a "sleep" key
+        raw_sessions.append(dp)
         
-        interval = sleep_data.get("interval", {})
+        # 1. Parse Interval for Start/End times
+        interval = dp.get("sleep", {}).get("interval", {})
         start_str = interval.get("startTime")
         end_str = interval.get("endTime")
         
         if start_str and end_str:
             start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
             end_dt = datetime.fromisoformat(end_str.replace('Z', '+00:00'))
-            duration_min = int((end_dt - start_dt).total_seconds() / 60)
-            total_duration += duration_min
             
             if not earliest_start or start_dt < earliest_start:
                 earliest_start = start_dt
             if not latest_end or end_dt > latest_end:
                 latest_end = end_dt
                 
-        stages = sleep_data.get("stages", {})
-        # Note: Google Health API usually returns stage durations in seconds. 
-        # We convert to minutes to match your PostgreSQL schema.
-        deep += stages.get("DEEP", 0) // 60
-        light += stages.get("LIGHT", 0) // 60
-        rem += stages.get("REM", 0) // 60
-        awake += stages.get("AWAKE", 0) // 60
+        # 2. Parse Summary (The robust way!)
+        summary = dp.get("sleep", {}).get("summary", {})
         
-    total_in_bed = total_duration + awake
-    efficiency = int((total_duration / total_in_bed) * 100) if total_in_bed > 0 else None
+        # Get total minutes in bed and asleep
+        # Note: The API returns these as STRINGS (e.g., "545"), so we must cast to int
+        mins_in_bed = int(summary.get("minutesInSleepPeriod", 0))
+        mins_asleep = int(summary.get("minutesAsleep", 0))
+        mins_awake_summary = int(summary.get("minutesAwake", 0))
+        
+        total_in_bed += mins_in_bed
+        total_asleep += mins_asleep
+        awake += mins_awake_summary
+        
+        # 3. Get stages from stagesSummary
+        stages_summary = summary.get("stagesSummary", [])
+        for stage in stages_summary:
+            stage_type = stage.get("type", "").upper()
+            # The API returns minutes as strings! e.g., "318"
+            mins = int(stage.get("minutes", 0))
+            
+            if stage_type == "DEEP":
+                deep += mins
+            elif stage_type == "LIGHT":
+                light += mins
+            elif stage_type == "REM":
+                rem += mins
+                
+    # 4. Calculate Efficiency
+    # Efficiency = (Time Asleep / Time in Bed) * 100
+    efficiency = int((total_asleep / total_in_bed) * 100) if total_in_bed > 0 else None
     
+    # Fallback for total_in_bed if summary was missing for some reason
+    if total_in_bed == 0 and earliest_start and latest_end:
+        total_in_bed = int((latest_end - earliest_start).total_seconds() / 60)
+        
     return {
         "sleep_start": earliest_start.isoformat() if earliest_start else None,
         "sleep_end": latest_end.isoformat() if latest_end else None,
-        "sleep_duration": total_duration,
+        "sleep_duration": total_in_bed,
         "deep_sleep": deep,
         "light_sleep": light,
         "rem_sleep": rem,
