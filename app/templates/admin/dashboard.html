@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <h1>System Overview</h1>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.active_consents }}</div>
+            <div class="stat-label">Active Consents</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.withdrawn_consents }}</div>
+            <div class="stat-label">Withdrawn</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.total_tokens }}</div>
+            <div class="stat-label">Stored Tokens</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.total_health_records }}</div>
+            <div class="stat-label">Health Records</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Recent Activity</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Legacy ID</th>
+                    <th>Status</th>
+                    <th>Consent Date</th>
+                    <th>IP Address (Decrypted)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in recent_users %}
+                <tr>
+                    <td><code>{{ user.legacy_id }}</code></td>
+                    <td>
+                        <span class="badge badge-{{ user.status }}">{{ user.status | upper }}</span>
+                    </td>
+                    <td>{{ user.consented_at[:10] if user.consented_at else 'N/A' }}</td>
+                    <td><code>{{ user.ip_address }}</code></td>
+                    <td><a href="/admin/users/{{ user.legacy_id }}" class="btn btn-primary">View Details</a></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" style="text-align:center; color:#94a3b8;">No users found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

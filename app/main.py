@@ -5,13 +5,15 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.config import get_settings
 from app.database import connect_to_mongodb, close_mongodb
-from app.api import auth, consent, dashboard, health_data
+from app.api import auth, consent, dashboard, health_data, admin
 from app.core.logging import setup_logging, get_logger
 from app.core.security import setup_security
+from app.api.admin import AdminAuthError
 
 # Initialize logging
 setup_logging()
@@ -81,6 +83,7 @@ def create_app() -> FastAPI:
     app.include_router(dashboard.router)
     app.include_router(health_data.router)
     app.include_router(consent.router)
+    app.include_router(admin.router)
     
     # Root redirect to homepage
     @app.get("/health")
@@ -98,6 +101,11 @@ def create_app() -> FastAPI:
             "error_type": type(exc).__name__
         }, status.HTTP_500_INTERNAL_SERVER_ERROR
     
+    # Add the Admin Auth Exception Handler
+    @app.exception_handler(AdminAuthError)
+    async def admin_auth_error_handler(request: Request, exc: AdminAuthError):
+        return RedirectResponse(url="/admin/login", status_code=303)
+        
     logger.info("✅ FastAPI application configured")
     return app
 

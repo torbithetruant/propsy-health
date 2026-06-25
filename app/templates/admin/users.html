@@ -1,0 +1,33 @@
+{% extends "admin/base.html" %}
+{% block title %}All Users{% endblock %}
+{% block content %}
+    <h1>All Users (Consent Records)</h1>
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Legacy ID</th>
+                    <th>Health ID</th>
+                    <th>Status</th>
+                    <th>Consent Version</th>
+                    <th>Last Updated</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td><code>{{ user.legacy_id }}</code></td>
+                    <td><code>{{ user.health_id }}</code></td>
+                    <td><span class="badge badge-{{ user.status }}">{{ user.status | upper }}</span></td>
+                    <td>v{{ user.consent_version }}</td>
+                    <td>{{ user.updated_at[:16] if user.updated_at else user.consented_at[:16] }}</td>
+                    <td><a href="/admin/users/{{ user.legacy_id }}" class="btn btn-primary">Manage</a></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" style="text-align:center;">No users found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

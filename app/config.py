@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     rate_limit_window: int = 60
     rate_limit_requests: int = 100
     environment: str = "development"
+
+    admin_password: str
     
     # MongoDB
     mongodb_uri: str

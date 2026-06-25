@@ -312,7 +312,7 @@ def setup_security(app: FastAPI):
             return await call_next(request)
         
         # Skip CSRF for API endpoints
-        if request.url.path.startswith("/api/"):
+        if request.url.path.startswith("/api/") or request.url.path.startswith("/admin/"):
             return await call_next(request)
             
         # Skip CSRF for dashboard POSTs (forms don't have CSRF tokens yet)

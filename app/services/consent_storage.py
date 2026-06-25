@@ -3,7 +3,6 @@ import logging
 from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-# Import encryption utilities
 from app.core.encryption import encrypt, decrypt
 
 logger = logging.getLogger(__name__)

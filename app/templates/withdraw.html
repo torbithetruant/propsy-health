@@ -2,123 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Withdraw from Study - Propsy Health</title>
+    <link rel="stylesheet" href="/static/css/main.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        /* Withdraw-specific gradient */
+        .page-gradient-withdraw {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
-        .container {
-            max-width: 600px;
-            width: 100%;
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        h1 { color: #333; margin-bottom: 16px; }
-        .subtitle { color: #666; margin-bottom: 24px; line-height: 1.6; }
-        .warning-box {
-            background: #fef2f2;
-            border-left: 4px solid #ef4444;
-            padding: 16px;
-            margin-bottom: 24px;
-            border-radius: 4px;
-        }
-        .warning-box strong { color: #991b1b; }
-        .form-group { margin-bottom: 16px; }
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #333;
-        }
-        .form-group textarea, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 1rem;
-        }
-        .checkbox-group {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 12px;
-            background: #f8fafc;
-            border-radius: 8px;
-            margin: 16px 0;
-        }
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-        }
-        .btn {
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-danger { background: #ef4444; color: white; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-secondary { background: #6b7280; color: white; }
-        .btn-secondary:hover { background: #4b5563; }
     </style>
 </head>
-<body>
+<body class="page-gradient page-gradient-withdraw">
     <div class="container">
-        <h1>⛔ Withdraw from Study</h1>
-        <p class="subtitle">
-            We're sorry to see you go. You have the right to withdraw from this study at any time, 
-            for any reason, without penalty. Your data will be handled according to our privacy policy.
-        </p>
-        
-        <div class="warning-box">
-            <strong>⚠️ Important:</strong> Withdrawing will immediately revoke our access to your Google Health account 
-            and permanently delete all your stored health data. This action cannot be undone.
-        </div>
-        
-        <form method="POST" action="/consent/withdraw">
-            <div class="form-group">
-                <label for="reason">Reason for withdrawal (optional):</label>
-                <select name="reason" id="reason">
-                    <option value="No longer interested">No longer interested</option>
-                    <option value="Privacy concerns">Privacy concerns</option>
-                    <option value="Found alternative solution">Found alternative solution</option>
-                    <option value="Technical issues">Technical issues</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
+        <div class="card">
+            <h1>⛔ Withdraw from Study</h1>
+            <p class="subtitle">
+                To withdraw from the Propsy Health research study, please contact our support team. 
+                We will process your request and ensure all your data is handled according to our privacy policy.
+            </p>
             
-            <div class="checkbox-group">
-                <input type="checkbox" id="delete_data" name="delete_data" value="true" checked required>
-                <label for="delete_data">
-                    <strong>Delete all my health data</strong> from Propsy Health servers 
-                    (GDPR Article 17 - Right to Erasure)
-                </label>
+            <div class="info-box">
+                <h3>📧 How to Withdraw</h3>
+                <p>
+                    Please send an email to 
+                    <a href="mailto:random@gmail.com?subject=Request%20to%20Withdraw%20from%20Study%20-%20{{ legacy_id }}">random@gmail.com</a> 
+                    with the following information:
+                </p>
+                <ul style="padding-left: 20px; margin: 12px 0;">
+                    <li>Your Legacy ID: <code>{{ legacy_id }}</code></li>
+                    <li>Your Health ID: <code>{{ health_id }}</code></li>
+                    <li>The reason for withdrawal (optional)</li>
+                </ul>
+                <p>Once we receive your email, our team will manually process your withdrawal and permanently delete your data.</p>
             </div>
             
             <div class="btn-group">
-                <button type="submit" class="btn btn-danger">
-                    ⛔ Confirm Withdrawal
-                </button>
-                <a href="/dashboard" class="btn btn-secondary">
-                    ← Cancel & Return to Dashboard
+                <a href="mailto:random@gmail.com?subject=Request%20to%20Withdraw%20from%20Study%20-%20{{ legacy_id }}&body=Hello,%0A%0AI would like to withdraw from the Propsy Health research study.%0A%0AMy Legacy ID: {{ legacy_id }}%0AMy Health ID: {{ health_id }}%0A%0AReason: %0A%0AThank you." class="btn btn-primary">
+                    ✉️ Send Withdrawal Email
                 </a>
+                <a href="/dashboard" class="btn btn-secondary">← Back to Dashboard</a>
             </div>
-        </form>
+        </div>
     </div>
 </body>
 </html>
