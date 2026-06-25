@@ -7,6 +7,19 @@
     <link rel="stylesheet" href="/static/css/main.css">
 </head>
 <body class="page-gradient">
+    {% if request.query_params.get('session_expired') %}
+    <div class="warning-box" style="margin-bottom: 24px;">
+        <strong>⚠️ Session Expired:</strong> Your account is no longer active. 
+        Please contact support if you believe this is an error.
+    </div>
+    {% endif %}
+
+    {% if request.query_params.get('session_revoked') %}
+    <div class="error-box" style="margin-bottom: 24px;">
+        <strong>🚫 Access Revoked:</strong> Your access has been revoked by an administrator.
+    </div>
+    {% endif %}
+
     <div class="container">
         <div class="card text-center">
             <h1>Propsy Health Connector</h1>

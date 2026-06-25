@@ -3,8 +3,10 @@ import logging
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Form
 from fastapi.responses import RedirectResponse, HTMLResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
+from datetime import datetime, timezone
 
 from app.core.templates import templates
+from app.core.session import SessionUser, clear_user_session
 from app.database import get_database
 from app.config import get_settings
 from app.services.consent_storage import ConsentStorageService
@@ -121,17 +123,32 @@ async def admin_user_detail(request: Request, legacy_id: str, db: AsyncIOMotorDa
     })
 
 @router.post("/users/{legacy_id}/delete", dependencies=[Depends(require_admin)])
-async def admin_force_delete_user(request: Request, legacy_id: str, db: AsyncIOMotorDatabase = Depends(get_database)):
-    """
-    EMERGENCY ACTION: Permanently deletes all traces of a user from the database.
-    """
+async def admin_force_delete_user(
+    request: Request, 
+    legacy_id: str, 
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """EMERGENCY ACTION: Permanently deletes all traces of a user."""
     consent_storage = ConsentStorageService(db)
     token_storage = TokenStorageService(db)
     health_storage = HealthDataStorage(db)
     
+    # 1. Add to revoked sessions list (for immediate invalidation)
+    revoked_col = db["revoked_sessions"]
+    await revoked_col.update_one(
+        {"legacy_id": legacy_id},
+        {"$set": {
+            "legacy_id": legacy_id,
+            "revoked_at": datetime.now(timezone.utc).isoformat(),
+            "reason": "admin_force_delete"
+        }},
+        upsert=True
+    )
+    
+    # 2. Delete all user data
     await consent_storage.collection.delete_one({"legacy_id": legacy_id})
     await token_storage.hard_delete_token(legacy_id)
     await health_storage.delete_all_records(legacy_id)
     
     logger.warning(f"🚨 ADMIN FORCE DELETED ALL DATA FOR USER: {legacy_id}")
-    return RedirectResponse(url=f"/admin/users?deleted=true", status_code=303)
+    return RedirectResponse(url=f"/admin/users/{legacy_id}?deleted=true", status_code=303)

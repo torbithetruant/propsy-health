@@ -1,7 +1,7 @@
 """FastAPI application entry point."""
 import signal
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -13,7 +13,9 @@ from app.database import connect_to_mongodb, close_mongodb
 from app.api import auth, consent, dashboard, health_data, admin
 from app.core.logging import setup_logging, get_logger
 from app.core.security import setup_security
+from app.core.session_validator import SessionValidationMiddleware
 from app.api.admin import AdminAuthError
+
 
 # Initialize logging
 setup_logging()
@@ -55,6 +57,8 @@ def create_app() -> FastAPI:
     )
 
     setup_security(app)
+
+    app.add_middleware(SessionValidationMiddleware)
     
     # Security Middleware
     app.add_middleware(
@@ -100,6 +104,29 @@ def create_app() -> FastAPI:
             "detail": "Internal server error",
             "error_type": type(exc).__name__
         }, status.HTTP_500_INTERNAL_SERVER_ERROR
+    
+    @app.exception_handler(HTTPException)
+    async def custom_http_exception_handler(request: Request, exc: HTTPException):
+        """
+        Custom handler for HTTPException.
+        Redirects 401 (Unauthorized) to homepage instead of showing error page.
+        """
+        # If user is not authenticated, redirect to homepage
+        if exc.status_code == 401:
+            return RedirectResponse(url="/?not_authenticated=true", status_code=303)
+        
+        # For all other HTTP errors (403, 404, 500, etc.), show the error page
+        from app.core.templates import templates
+        return templates.TemplateResponse(
+            request,
+            "error.html",
+            {
+                "title": f"Error {exc.status_code}",
+                "message": exc.detail,
+                "details": None
+            },
+            status_code=exc.status_code
+        )
     
     # Add the Admin Auth Exception Handler
     @app.exception_handler(AdminAuthError)
