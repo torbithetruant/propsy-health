@@ -50,6 +50,19 @@ async def privacy_policy(
     )
 
 
+@public_router.get("/contact", response_class=HTMLResponse)
+async def contact_page(
+    request: Request,
+    current_user: SessionUser | None = Depends(get_optional_user)
+):
+    """Render the Contact Us page."""
+    return templates.TemplateResponse(
+        request,
+        "contact.html",
+        {"current_user": current_user}
+    )
+
+
 @public_router.get("/login")
 async def start_oauth_flow(request: Request):
     """Initiate Google OAuth flow with PKCE support."""
