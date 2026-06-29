@@ -1,33 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title | default("Error") }}</title>
-    <link rel="stylesheet" href="/static/css/main.css">
-</head>
-<body class="page-gradient-error">
-    <div class="container">
-        <div class="card text-center">
-            <h1>{{ title }}</h1>
-            <p class="subtitle">{{ message }}</p>
+{% extends "base.html" %}
+
+{% block title %}{{ title | default("Error") }} - Propsy Health{% endblock %}
+
+{% block content %}
+<div style="padding: 80px 20px; text-align: center;">
+    <div class="container" style="max-width: 600px;">
+        <div class="card" style="padding: 48px;">
             
+            <!-- Dynamic Icon based on error type -->
+            <div style="font-size: 4rem; margin-bottom: 16px;">
+                {% if title and '404' in title %}
+                    🔍
+                {% elif title and '403' in title %}
+                    🚫
+                {% elif title and '500' in title %}
+                    ⚙️
+                {% elif title and '401' in title %}
+                    🔒
+                {% else %}
+                    ⚠️
+                {% endif %}
+            </div>
+            
+            <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px;">
+                {{ title | default("Oops! Something went wrong") }}
+            </h1>
+            
+            <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 32px; line-height: 1.6;">
+                {{ message | default("We couldn't process your request. Please try again or return to the homepage.") }}
+            </p>
+            
+            <!-- Technical Details (Only shown if provided) -->
             {% if details %}
-            <div class="error-box">
-                <strong>Details:</strong><br>
-                <code style="background: transparent; color: inherit; white-space: pre-wrap;">{{ details }}</code>
+            <div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 16px; border-radius: 6px; margin-bottom: 32px; text-align: left;">
+                <strong style="color: #991b1b;">Technical Details:</strong>
+                <p style="color: #991b1b; font-family: monospace; font-size: 0.9rem; margin-top: 8px; word-break: break-all;">
+                    {{ details }}
+                </p>
             </div>
             {% endif %}
             
-            <div class="btn-group" style="justify-content: center;">
-                <a href="/" class="btn btn-primary">Return to Home</a>
-                <a href="/login" class="btn btn-secondary">Try Again</a>
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                <a href="/" class="btn btn-primary">🏠 Return to Homepage</a>
+                <a href="/login" class="btn btn-outline">🔄 Try Again</a>
             </div>
             
-            <div class="footer">
-                <p>If this error persists, please contact support.</p>
-            </div>
         </div>
+        
+        <p style="margin-top: 24px; color: var(--text-muted); font-size: 0.9rem;">
+            If this error persists, please <a href="mailto:support@your-domain.com" style="color: var(--primary);">contact our support team</a>.
+        </p>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

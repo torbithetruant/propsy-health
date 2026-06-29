@@ -1,127 +1,241 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Health Data - Propsy Health</title>
-    <link rel="stylesheet" href="/static/css/main.css">
-</head>
-<body class="page-gradient">
-    <div class="container-wide">
-        <div class="card">
-            <h1>My Health Data</h1>
-            <p class="subtitle">View your daily health data from Google Health</p>
-            
-            <div class="date-picker-section">
-                <label for="date-picker" style="font-weight: 600;">📅 Select a date:</label>
-                <input type="date" id="date-picker" style="width: auto; flex: 1; min-width: 150px;" />
-                <button class="btn btn-primary" id="fetch-btn" onclick="fetchHealthData()">Fetch Data</button>
-                <span id="source-indicator"></span>
-            </div>
-            
-            <div id="content-area">
-                <div class="text-center" style="padding: 40px; color: #666;">
-                    <p style="font-size: 3rem;">📊</p>
-                    <p>Select a date and click "Fetch Data" to view your health metrics.</p>
-                </div>
-            </div>
-            
-            <div class="mt-24">
-                <a href="/dashboard" class="btn btn-secondary">← Back to Dashboard</a>
-            </div>
+{% extends "base.html" %}
+{% block title %}My Health Data - Propsy Health{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .wear-time-bar-container {
+        background: #e2e8f0;
+        border-radius: 8px;
+        height: 24px;
+        width: 100%;
+        overflow: hidden;
+        margin-top: 12px;
+    }
+    .wear-time-bar {
+        background: var(--gradient);
+        height: 100%;
+        border-radius: 8px;
+        transition: width 0.5s ease;
+    }
+    .chart-container {
+        position: relative;
+        height: 280px;
+        width: 100%;
+    }
+    .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    .badge-success { background: #d1fae5; color: #065f46; }
+    .badge-primary { background: #dbeafe; color: #1e40af; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 24px;">
+    <div style="margin-bottom: 32px;">
+        <h1 style="font-size: 2rem; font-weight: 700; color: var(--text-main);">My Health Data</h1>
+        <p style="color: var(--text-muted);">View your daily health data from Google Health</p>
+    </div>
+
+    <!-- Date Picker -->
+    <div class="card" style="margin-bottom: 32px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+        <label for="date-picker" style="font-weight: 600; font-size: 1.1rem;">📅 Select a date:</label>
+        <input type="date" id="date-picker" style="width: auto; flex: 1; min-width: 200px;" />
+        <button class="btn btn-primary" id="fetch-btn" onclick="fetchHealthData()">Fetch Data</button>
+        <span id="source-indicator"></span>
+    </div>
+
+    <!-- Daily Content Area -->
+    <div id="content-area">
+        <div class="card text-center" style="padding: 60px 20px; color: var(--text-muted);">
+            <p style="font-size: 3rem; margin-bottom: 16px;">📊</p>
+            <p>Select a date and click "Fetch Data" to view your health metrics.</p>
         </div>
     </div>
 
-    <script>
-        // Initialize date picker with today's date
-        const datePicker = document.getElementById('date-picker');
-        const today = new Date();
-        datePicker.value = today.toISOString().split('T')[0];
+    <div style="margin-top: 32px;">
+        <a href="/dashboard" class="btn btn-outline">← Back to Dashboard</a>
+    </div>
+</div>
+
+<script>
+    // Initialize date picker with today's date
+    const datePicker = document.getElementById('date-picker');
+    const today = new Date();
+    datePicker.value = today.toISOString().split('T')[0];
+    
+    // Fetch daily data on load
+    fetchHealthData();
+
+    async function fetchHealthData() {
+        const date = datePicker.value;
+        if (!date) return alert('Please select a date');
         
-        // Auto-fetch on page load
-        fetchHealthData();
+        const contentArea = document.getElementById('content-area');
+        const fetchBtn = document.getElementById('fetch-btn');
+        const sourceIndicator = document.getElementById('source-indicator');
         
-        async function fetchHealthData() {
-            const date = datePicker.value;
-            if (!date) return alert('Please select a date');
-            
-            const contentArea = document.getElementById('content-area');
-            const fetchBtn = document.getElementById('fetch-btn');
-            const sourceIndicator = document.getElementById('source-indicator');
-            
-            fetchBtn.disabled = true;
-            sourceIndicator.innerHTML = '';
-            contentArea.innerHTML = `<div class="text-center" style="padding: 40px;"><p>Fetching health data for <strong>${date}</strong>...</p></div>`;
-            
-            try {
-                const response = await fetch(`/api/health-data/${date}`);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const result = await response.json();
-                renderHealthData(result, date);
-            } catch (error) {
-                contentArea.innerHTML = `<div class="error-box"><strong>❌ Error:</strong> ${error.message}</div>`;
-            } finally {
-                fetchBtn.disabled = false;
-            }
+        fetchBtn.disabled = true;
+        sourceIndicator.innerHTML = '';
+        contentArea.innerHTML = `<div class="card text-center" style="padding: 40px;"><p>Fetching health data for <strong>${date}</strong>...</p></div>`;
+        
+        try {
+            const response = await fetch(`/api/health-data/${date}`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const result = await response.json();
+            renderHealthData(result, date);
+        } catch (error) {
+            contentArea.innerHTML = `<div class="card" style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 20px; border-radius: 8px;"><strong>❌ Error:</strong> ${error.message}</div>`;
+        } finally {
+            fetchBtn.disabled = false;
         }
+    }
+    
+    function renderHealthData(result, date) {
+        const contentArea = document.getElementById('content-area');
+        const sourceIndicator = document.getElementById('source-indicator');
+        const data = result.data;
+        const source = result.source;
         
-        function renderHealthData(result, date) {
-            const contentArea = document.getElementById('content-area');
-            const sourceIndicator = document.getElementById('source-indicator');
-            const data = result.data;
-            const source = result.source;
-            
-            const sourceLabel = source === 'database' ? '⚡ From Cache' : '🌐 From Google API';
-            const badgeClass = source === 'database' ? 'badge-success' : 'badge-primary';
-            sourceIndicator.innerHTML = `<span class="badge ${badgeClass}">${sourceLabel}</span>`;
-            
-            const hasData = data.steps > 0 || data.calories > 0 || data.sleep_duration > 0;
-            
-            if (!hasData) {
-                contentArea.innerHTML = `<div class="text-center" style="padding: 40px; color: #666;"><p style="font-size: 3rem;">😴</p><p>No health data available for <strong>${date}</strong>.</p></div>`;
-                return;
-            }
-            
-            contentArea.innerHTML = `
-                <div class="data-grid">
-                    <div class="card-flat">
-                        <h2>🏃 Activity</h2>
-                        ${renderMetric('Steps', data.steps, 'steps')}
-                        ${renderMetric('Calories', data.calories, 'kcal')}
-                        ${renderMetric('Wear Time', formatMinutes(data.wear_time), '')}
+        const sourceLabel = source === 'database' ? '⚡ From Cache' : '🌐 From Google API';
+        const badgeClass = source === 'database' ? 'badge-success' : 'badge-primary';
+        sourceIndicator.innerHTML = `<span class="badge ${badgeClass}">${sourceLabel}</span>`;
+        
+        const hasData = data.steps > 0 || data.calories > 0 || data.sleep_duration > 0;
+        
+        if (!hasData) {
+            contentArea.innerHTML = `<div class="card text-center" style="padding: 40px; color: var(--text-muted);"><p style="font-size: 3rem;">😴</p><p>No health data available for <strong>${date}</strong>.</p></div>`;
+            return;
+        }
+
+        // Wear time progress bar (max 1440 minutes = 24h)
+        const wearTimePercent = Math.min((data.wear_time / 1440) * 100, 100);
+        
+        contentArea.innerHTML = `
+            <div class="grid-2" style="margin-bottom: 24px;">
+                <!-- Wear Time Card -->
+                <div class="card">
+                    <h3>⌚ Wear Time</h3>
+                    <p style="font-size: 2rem; font-weight: 700; margin: 16px 0;">${formatMinutes(data.wear_time)}</p>
+                    <div class="wear-time-bar-container">
+                        <div class="wear-time-bar" style="width: ${wearTimePercent}%"></div>
                     </div>
-                    <div class="card-flat">
-                        <h2>❤️ Heart Rate</h2>
-                        ${renderMetric('Average HR', data.avg_hr, 'bpm')}
-                        ${renderMetric('Max HR', data.max_hr, 'bpm')}
-                        ${renderMetric('Resting HR', data.resting_hr, 'bpm')}
-                    </div>
-                    <div class="card-flat">
-                        <h2>😴 Sleep</h2>
-                        ${renderMetric('Duration', formatMinutes(data.sleep_duration), '')}
-                        ${renderMetric('Deep Sleep', formatMinutes(data.deep_sleep), '')}
-                        ${renderMetric('Light Sleep', formatMinutes(data.light_sleep), '')}
-                        ${renderMetric('REM Sleep', formatMinutes(data.rem_sleep), '')}
-                        ${renderMetric('Efficiency', data.sleep_efficiency !== null ? data.sleep_efficiency + '%' : null, '')}
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px;">${wearTimePercent.toFixed(1)}% of the day</p>
+                </div>
+
+                <!-- Sleep Cycle Chart -->
+                <div class="card">
+                    <h3>🌙 Sleep Cycle</h3>
+                    <div class="chart-container">
+                        <canvas id="sleepChart"></canvas>
                     </div>
                 </div>
-            `;
+            </div>
+
+            <div class="grid-3" style="margin-bottom: 24px;">
+                <div class="card">
+                    <h3>🏃 Activity</h3>
+                    ${renderMetric('Steps', data.steps, 'steps')}
+                    ${renderMetric('Calories', data.calories, 'kcal')}
+                </div>
+                <div class="card">
+                    <h3>❤️ Heart Rate</h3>
+                    ${renderMetric('Average HR', data.avg_hr, 'bpm')}
+                    ${renderMetric('Max HR', data.max_hr, 'bpm')}
+                    ${renderMetric('Resting HR', data.resting_hr, 'bpm')}
+                </div>
+                <div class="card">
+                    <h3>🌙 Sleep Summary</h3>
+                    ${renderMetric('Duration', formatMinutes(data.sleep_duration), '')}
+                    ${renderMetric('Efficiency', data.sleep_efficiency !== null ? data.sleep_efficiency + '%' : null, '')}
+                </div>
+            </div>
+        `;
+
+        // Render Sleep Chart with hours/minutes formatting
+        if (data.deep_sleep || data.light_sleep || data.rem_sleep) {
+            const deepHours = formatMinutesForChart(data.deep_sleep || 0);
+            const lightHours = formatMinutesForChart(data.light_sleep || 0);
+            const remHours = formatMinutesForChart(data.rem_sleep || 0);
+            
+            const ctx = document.getElementById('sleepChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        `Deep Sleep (${deepHours})`,
+                        `Light Sleep (${lightHours})`,
+                        `REM Sleep (${remHours})`
+                    ],
+                    datasets: [{
+                        data: [data.deep_sleep || 0, data.light_sleep || 0, data.rem_sleep || 0],
+                        backgroundColor: ['#4c1d95', '#8b5cf6', '#c4b5fd'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const formatted = formatMinutesForChart(value);
+                                    return `${label}: ${formatted}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
-        
-        function renderMetric(label, value, unit) {
-            const displayValue = value === null || value === undefined 
-                ? '<span class="metric-value" style="color:#9ca3af; font-style:italic; font-weight:normal;">No data</span>'
-                : `<span class="metric-value">${value}${unit ? ' ' + unit : ''}</span>`;
-            return `<div class="metric"><span class="metric-label">${label}</span>${displayValue}</div>`;
+        else {
+            document.getElementById('sleepChart').parentElement.innerHTML = `<p style="color: var(--text-muted); margin-top: 16px;">No sleep data available for this date.</p>`;
         }
-        
-        function formatMinutes(minutes) {
-            if (minutes === null || minutes === undefined) return null;
-            if (minutes < 60) return `${minutes} min`;
-            const h = Math.floor(minutes / 60);
-            const m = minutes % 60;
-            return m > 0 ? `${h}h ${m}m` : `${h}h`;
+    }
+    
+    function renderMetric(label, value, unit) {
+        const displayValue = value === null || value === undefined 
+            ? '<span style="color: var(--text-muted); font-style: italic;">No data</span>'
+            : `<span style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">${value}${unit ? ' <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-muted);">' + unit + '</span>' : ''}</span>`;
+        return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border);"><span style="color: var(--text-muted); font-size: 0.9rem;">${label}</span>${displayValue}</div>`;
+    }
+    
+    function formatMinutes(minutes) {
+        if (minutes === null || minutes === undefined) return '-';
+        if (minutes < 60) return `${minutes}m`;
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        return m > 0 ? `${h}h ${m}m` : `${h}h`;
+    }
+    
+    function formatMinutesForChart(minutes) {
+        if (minutes === null || minutes === undefined || minutes === 0) return '0m';
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        if (h > 0 && m > 0) {
+            return `${h}h ${m}m`;
+        } else if (h > 0) {
+            return `${h}h`;
+        } else {
+            return `${m}m`;
         }
-    </script>
-</body>
-</html>
+    }
+</script>
+{% endblock %}

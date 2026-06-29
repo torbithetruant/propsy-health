@@ -1,56 +1,123 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Propsy Health - Secure Health Data Synchronization</title>
-    <link rel="stylesheet" href="/static/css/main.css">
-</head>
-<body class="page-gradient">
-    {% if request.query_params.get('session_expired') %}
-    <div class="warning-box" style="margin-bottom: 24px;">
-        <strong>⚠️ Session Expired:</strong> Your account is no longer active. 
-        Please contact support if you believe this is an error.
-    </div>
-    {% endif %}
+{% extends "base.html" %}
 
-    {% if request.query_params.get('session_revoked') %}
-    <div class="error-box" style="margin-bottom: 24px;">
-        <strong>🚫 Access Revoked:</strong> Your access has been revoked by an administrator.
-    </div>
-    {% endif %}
+{% block title %}Propsy Health - Your Data, Your Control{% endblock %}
 
-    <div class="container">
-        <div class="card text-center">
-            <h1>Propsy Health Connector</h1>
-            <p class="subtitle">
-                Securely synchronize your daily fitness, sleep, and health metrics from Google Health to the Propsy platform. 
-                We provide a private dashboard to visualize your well-being over time.
-            </p>
-            
-            <div class="features-list">
-                <h3>What you can do:</h3>
-                <ul>
-                    <li>View daily step counts, calories, and active wear time</li>
-                    <li>Analyze sleep stages (Deep, Light, REM) and efficiency</li>
-                    <li>Track heart rate trends and resting metrics</li>
-                    <li>Revoke access and delete your data at any time</li>
-                </ul>
+{% block content %}
+
+<!-- 1. HERO SECTION -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">Understand Your Health.<br>Own Your Data.</h1>
+        <p class="hero-subtitle">
+            Securely synchronize your fitness, sleep, and heart rate metrics from Google Health. 
+            Participate in our research study while maintaining complete control over your personal information.
+        </p>
+        <a href="/login" class="gsi-material-button" style="height: 50px; font-size: 16px; padding: 0 24px;">
+            <div class="gsi-material-button-state"></div>
+            <div class="gsi-material-button-content-wrapper">
+                <div class="gsi-material-button-icon">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" style="display: block;">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                        <path fill="none" d="M0 0h48v48H0z"></path>
+                    </svg>
+                </div>
+                <span class="gsi-material-button-contents">Connect with Google Health</span>
             </div>
-            
-            <a href="/login" class="btn btn-google">
-                Sign in with Google
-            </a>
-            
-            <div class="footer">
-                <p>🔒 Secure OAuth 2.0 authentication with AES-256 encryption at rest.</p>
-                <p>
-                    By connecting, you agree to our 
-                    <a href="/privacy">Privacy Policy</a> and 
-                    <a href="/privacy">Terms of Service</a>.
-                </p>
+        </a>
+        <p style="margin-top: 16px; font-size: 0.85rem; opacity: 0.8;">
+            🔒 AES-256 Encryption · GDPR Compliant · Read-Only Access
+        </p>
+    </div>
+</section>
+
+<!-- 2. FEATURES SECTION -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">A Complete View of Your Well-being</h2>
+            <p class="section-desc">We transform raw Google Health data into clear, actionable insights.</p>
+        </div>
+        
+        <div class="grid-3">
+            <div class="card">
+                <div class="card-icon"></div>
+                <h3>Daily Activity</h3>
+                <p>Track your step counts, calories burned, and active wear time. Build a complete picture of your daily movement and energy expenditure.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">😴</div>
+                <h3>Sleep Analysis</h3>
+                <p>Break down your night into Deep, Light, and REM stages. Monitor your sleep efficiency and identify patterns affecting your rest.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">❤️</div>
+                <h3>Heart Rate Trends</h3>
+                <p>View your average, maximum, and resting heart rate. See detailed readings throughout the day to understand your cardiovascular health.</p>
             </div>
         </div>
     </div>
-</body>
-</html>
+</section>
+
+<!-- 3. RESEARCH STUDY SECTION -->
+<section class="section" style="background: white; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+    <div class="container">
+        <div class="grid-2">
+            <div>
+                <h2 class="section-title" style="text-align: left;">Participate in Health Research</h2>
+                <p class="section-desc" style="text-align: left; margin-bottom: 24px;">
+                    By connecting your account, you contribute to a broader understanding of daily health metrics. 
+                    Our study focuses on how activity, sleep, and heart rate correlate over time.
+                </p>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 12px; display: flex; gap: 12px; align-items: flex-start;">
+                        <span style="color: var(--primary); font-weight: bold;">✓</span>
+                        <span><strong>Voluntary Participation:</strong> You can withdraw from the study at any time without penalty.</span>
+                    </li>
+                    <li style="margin-bottom: 12px; display: flex; gap: 12px; align-items: flex-start;">
+                        <span style="color: var(--primary); font-weight: bold;">✓</span>
+                        <span><strong>Complete Anonymity:</strong> Your data is encrypted and never shared with third parties.</span>
+                    </li>
+                    <li style="margin-bottom: 12px; display: flex; gap: 12px; align-items: flex-start;">
+                        <span style="color: var(--primary); font-weight: bold;">✓</span>
+                        <span><strong>Right to Erasure:</strong> Request the permanent deletion of your data at any moment.</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="card" style="background: #f8fafc; border: none; box-shadow: none;">
+                <h3 style="margin-bottom: 16px;">📋 Informed Consent</h3>
+                <p style="margin-bottom: 16px;">Before accessing your dashboard, you will review our Informed Consent document. This ensures you fully understand:</p>
+                <ul style="padding-left: 20px; color: var(--text-muted);">
+                    <li>The nature and duration of the research.</li>
+                    <li>The risks and benefits of participation.</li>
+                    <li>Our strict privacy and security measures.</li>
+                    <li>How to contact our research team.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4. CONTACT & TRUST SECTION -->
+<section class="section">
+    <div class="container text-center">
+        <div class="card" style="max-width: 800px; margin: 0 auto; background: var(--gradient); color: white; border: none;">
+            <h2 style="color: white; margin-bottom: 16px;">Questions? We're here to help.</h2>
+            <p style="color: white; opacity: 0.9; margin-bottom: 24px; font-size: 1.1rem;">
+                Whether you have questions about the research study, your data privacy, or technical issues, our team is ready to assist you.
+            </p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <a href="mailto:research@your-domain.com" class="btn" style="background: white; color: var(--primary);">
+                    ✉️ Contact Research Team
+                </a>
+                <a href="/privacy" class="btn btn-outline" style="border-color: rgba(255,255,255,0.3); color: white;">
+                    📄 Read Privacy Policy
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

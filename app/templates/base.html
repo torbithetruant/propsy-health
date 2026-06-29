@@ -5,28 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Propsy Health{% endblock %}</title>
     <link rel="stylesheet" href="/static/css/main.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     {% block extra_head %}{% endblock %}
 </head>
 <body>
     
-    <!-- CLEAN STICKY NAVBAR -->
+    <!-- NAVBAR - Always at the top -->
     <nav class="navbar">
         <div class="navbar-container">
             <a href="/" class="navbar-brand">
-                <span style="font-size: 1.5rem;">🏥</span> Propsy Health
+                <span class="logo">🏥</span>
+                <span>Propsy Health</span>
             </a>
             
             <ul class="navbar-menu">
-                <li><a href="/" class="navbar-link {% if request.url.path == '/' %}active{% endif %}">Home</a></li>
+                <li><a href="/" class="navbar-link {% if request.url.path == '/' %}active{% endif %}">🏠 Home</a></li>
                 
                 {% if current_user %}
-                    <li><a href="/dashboard" class="navbar-link">Dashboard</a></li>
-                    <li><a href="/dashboard/data" class="navbar-link">My Data</a></li>
-                    <li><a href="/privacy" class="navbar-link">Privacy</a></li>
-                    <li><a href="/logout" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.9rem;">Sign Out</a></li>
+                    <li><a href="/dashboard" class="navbar-link">📊 Dashboard</a></li>
+                    <li><a href="/dashboard/data" class="navbar-link">📈 My Data</a></li>
+                    <li><a href="/privacy" class="navbar-link">🔒 Privacy</a></li>
+                    <li>
+                        <a href="/dashboard/disconnect" 
+                        onclick="event.preventDefault(); 
+                                    fetch('/dashboard/disconnect', {method: 'POST', headers: {'Content-Type': 'application/json'}})
+                                    .then(() => window.location.href = '/?logged_out=true');" 
+                        onmouseover="this.style.color='#1e293b'" 
+                        onmouseout="this.style.color='#64748b'"
+                        class="navbar-link" 
+                        style="color: #64748b; font-weight: 500; cursor: pointer; text-decoration: none;">
+                           🔒 Sign Out
+                        </a>
+                    </li>
                 {% else %}
-                    <li><a href="/privacy" class="navbar-link">Privacy</a></li>
+                    <li><a href="/privacy" class="navbar-link">🔒 Privacy</a></li>
                     <li>
                         <a href="/login" class="gsi-material-button gsi-navbar">
                             <div class="gsi-material-button-state"></div>
@@ -40,7 +51,7 @@
                                         <path fill="none" d="M0 0h48v48H0z"></path>
                                     </svg>
                                 </div>
-                                <span class="gsi-material-button-contents">Sign in</span>
+                                <span class="gsi-material-button-contents">Sign in with Google</span>
                             </div>
                         </a>
                     </li>
@@ -49,22 +60,10 @@
         </div>
     </nav>
     
-    <!-- MAIN CONTENT AREA -->
+    <!-- MAIN CONTENT -->
     <main class="main-content">
         {% block content %}{% endblock %}
     </main>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="container">
-            <p>© 2026 Propsy Health. Securely synchronizing your well-being.</p>
-            <div class="footer-links">
-                <a href="/privacy">Privacy Policy</a>
-                <a href="/privacy">Terms of Service</a>
-                <a href="mailto:research@your-domain.com">Contact Support</a>
-            </div>
-        </div>
-    </footer>
 
 </body>
 </html>

@@ -1,48 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Withdraw from Study - Propsy Health</title>
-    <link rel="stylesheet" href="/static/css/main.css">
-    <style>
-        /* Withdraw-specific gradient */
-        .page-gradient-withdraw {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-    </style>
-</head>
-<body class="page-gradient page-gradient-withdraw">
-    <div class="container">
-        <div class="card">
-            <h1>⛔ Withdraw from Study</h1>
-            <p class="subtitle">
-                To withdraw from the Propsy Health research study, please contact our support team. 
-                We will process your request and ensure all your data is handled according to our privacy policy.
-            </p>
-            
-            <div class="info-box">
-                <h3>📧 How to Withdraw</h3>
-                <p>
-                    Please send an email to 
-                    <a href="mailto:random@gmail.com?subject=Request%20to%20Withdraw%20from%20Study%20-%20{{ legacy_id }}">random@gmail.com</a> 
-                    with the following information:
-                </p>
-                <ul style="padding-left: 20px; margin: 12px 0;">
-                    <li>Your Legacy ID: <code>{{ legacy_id }}</code></li>
-                    <li>Your Health ID: <code>{{ health_id }}</code></li>
-                    <li>The reason for withdrawal (optional)</li>
-                </ul>
-                <p>Once we receive your email, our team will manually process your withdrawal and permanently delete your data.</p>
-            </div>
-            
-            <div class="btn-group">
-                <a href="mailto:random@gmail.com?subject=Request%20to%20Withdraw%20from%20Study%20-%20{{ legacy_id }}&body=Hello,%0A%0AI would like to withdraw from the Propsy Health research study.%0A%0AMy Legacy ID: {{ legacy_id }}%0AMy Health ID: {{ health_id }}%0A%0AReason: %0A%0AThank you." class="btn btn-primary">
-                    ✉️ Send Withdrawal Email
-                </a>
-                <a href="/dashboard" class="btn btn-secondary">← Back to Dashboard</a>
-            </div>
-        </div>
+{% extends "base.html" %}
+
+{% block title %}Withdraw from Study - Propsy Health{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 24px; max-width: 800px;">
+    
+    <!-- Header -->
+    <div style="margin-bottom: 32px;">
+        <h1 style="font-size: 2rem; font-weight: 700; color: var(--text-main);">⛔ Withdraw from Study</h1>
+        <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.6;">
+            We're sorry to see you go. To withdraw from the Propsy Health research study, please contact our support team. 
+            We will process your request and ensure all your data is handled according to our privacy policy.
+        </p>
     </div>
-</body>
-</html>
+
+    <!-- Instructions Card -->
+    <div class="card" style="margin-bottom: 24px;">
+        <h3 style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            📧 How to Withdraw
+        </h3>
+        <p style="color: var(--text-muted); margin-bottom: 16px; line-height: 1.6;">
+            Please send an email to our support team at 
+            <a href="mailto:random@gmail.com?subject=Request%20to%20Withdraw%20from%20Study%20-%20{{ legacy_id }}" style="color: var(--primary); font-weight: 600;">random@gmail.com</a>. 
+            To ensure we process your request quickly, please include the following information:
+        </p>
+        
+        <div style="background: #f8fafc; border-radius: 8px; padding: 16px; border: 1px solid var(--border);">
+            <ul style="padding-left: 20px; color: var(--text-main); line-height: 1.8; margin: 0;">
+                <li>Your Legacy ID: <code>{{ legacy_id }}</code></li>
+                <li>Your Health ID: <code>{{ health_id }}</code></li>
+                <li>The reason for withdrawal (optional)</li>
+            </ul>
+        </div>
+
+        <p style="color: var(--text-muted); margin-top: 16px; font-size: 0.9rem; line-height: 1.6;">
+            Once we receive your email, our team will manually process your withdrawal and permanently delete your data from our servers.
+        </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="mailto:random@gmail.com?subject=Request%20to%20Withdraw%20from%20Study%20-%20{{ legacy_id }}&body=Hello,%0A%0AI would like to withdraw from the Propsy Health research study.%0A%0AMy Legacy ID: {{ legacy_id }}%0AMy Health ID: {{ health_id }}%0A%0AReason: %0A%0AThank you." class="btn btn-primary">
+            ✉️ Send Withdrawal Email
+        </a>
+        <a href="/dashboard" class="btn btn-outline">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+</div>
+{% endblock %}

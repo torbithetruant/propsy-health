@@ -1,10 +1,10 @@
 """OAuth authentication API endpoints."""
 import logging
-from fastapi import APIRouter, Depends, Path, Request, HTTPException, status
-from fastapi.responses import RedirectResponse, HTMLResponse, JSONResponse
+from fastapi import APIRouter, Depends, Path, Request, status
+from fastapi.responses import RedirectResponse, HTMLResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from app.core.session import set_user_session
+from app.core.session import set_user_session, get_optional_user, SessionUser
 from app.core.templates import templates
 from app.database import get_database, health_check as db_health_check
 from app.auth.google_oauth import GoogleOAuthService, get_legacy_user_id
@@ -24,13 +24,29 @@ oauth_service = GoogleOAuthService(client_secrets_path=client_secrets_path)
 
 SESSION_STATE_KEY = "oauth_state"
 
-
 @public_router.get("/", response_class=HTMLResponse)
-async def homepage(request: Request):
+async def homepage(
+    request: Request,
+    current_user: SessionUser | None = Depends(get_optional_user)
+):
     """Render the OAuth onboarding homepage."""
     return templates.TemplateResponse(
         request,
         "index.html",
+        {"current_user": current_user}
+    )
+
+
+@public_router.get("/privacy", response_class=HTMLResponse)
+async def privacy_policy(
+    request: Request,
+    current_user: SessionUser | None = Depends(get_optional_user)
+):
+    """Render the Privacy Policy page."""
+    return templates.TemplateResponse(
+        request,
+        "privacy.html",
+        {"current_user": current_user}
     )
 
 
@@ -206,12 +222,6 @@ async def oauth_callback(
     logger.info("🎉 OAuth flow complete for legacy_id")
 
     return RedirectResponse(url="/consent", status_code=status.HTTP_303_SEE_OTHER)
-
-
-@public_router.get("/privacy", response_class=HTMLResponse)
-async def privacy_policy(request: Request):
-    """Render the Privacy Policy page (Required for Google OAuth Verification)."""
-    return templates.TemplateResponse(request, "privacy.html", {})
 
 
 # ============================================================================

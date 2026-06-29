@@ -18,7 +18,6 @@ settings = get_settings()
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
-
 @router.get("/", response_class=HTMLResponse)
 async def dashboard_home(
     request: Request,
@@ -29,6 +28,7 @@ async def dashboard_home(
         request,
         "dashboard.html",
         {
+            "current_user": current_user,
             "legacy_id": current_user.legacy_id,
             "health_id": current_user.health_id,
         }
@@ -38,19 +38,16 @@ async def dashboard_home(
 @router.get("/data", response_class=HTMLResponse)
 async def view_my_data(
     request: Request,
-    current_user: SessionUser = Depends(get_current_user_with_consent),
-    db: AsyncIOMotorDatabase = Depends(get_database)
+    current_user: SessionUser = Depends(get_current_user_with_consent)
 ):
     """View Google Health data."""
-    # Get token from database
-    
     return templates.TemplateResponse(
         request,
         "data.html",
         {
+            "current_user": current_user,
             "legacy_id": current_user.legacy_id,
             "health_id": current_user.health_id,
-            "health_data": None,
         }
     )
 

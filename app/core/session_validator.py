@@ -10,7 +10,6 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import RedirectResponse
 
 from app.database import get_database
-from app.services.consent_storage import ConsentStorageService
 
 logger = logging.getLogger(__name__)
 

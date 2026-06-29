@@ -1,106 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Propsy Health</title>
-    <link rel="stylesheet" href="/static/css/main.css">
-</head>
-<body class="page-gradient">
-    <div class="container">
-        <div class="card">
-            <h1>Dashboard</h1>
-            <p class="subtitle">Manage your Google Health connection</p>
-            
-            <div class="info-box">
-                <h3>Account Information</h3>
-                <p><strong>Legacy ID:</strong> <code>{{ legacy_id }}</code></p>
-                <p><strong>Health ID:</strong> <code>{{ health_id }}</code></p>
-            </div>
-            
-            <div class="menu-grid">
-                <a href="/dashboard/data" class="menu-item">
-                    <h3>📊 See My Data</h3>
-                    <p>View your health data from Google Health (activity, sleep, heart rate, etc.)</p>
-                </a>
-                
-                <div class="menu-item danger" onclick="showModal('withdraw-modal')">
-                    <h3>🗑️ Withdraw from Study</h3>
-                    <p>Delete all your stored data from our database. Your Google connection will remain active.</p>
-                </div>
-                
-                <div class="menu-item danger" onclick="showModal('disconnect-modal')">
-                    <h3>🔌 Disconnect</h3>
-                    <p>You'll need to reconnect to use the service again.</p>
-                </div>
-                
-                <div class="menu-item danger" onclick="showModal('revoke-modal')">
-                    <h3>⛔ Revoke Token</h3>
-                    <p>Mark your token as revoked. This is a soft delete - data remains but token becomes inactive.</p>
-                </div>
-            </div>
-            
-            <a href="/" class="btn btn-secondary">← Back to Home</a>
-        </div>
+{% extends "base.html" %}
+{% block title %}Dashboard - Propsy Health{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 24px;">
+    <div style="margin-bottom: 32px;">
+        <h1 style="font-size: 2rem; font-weight: 700; color: var(--text-main);">Dashboard</h1>
+        <p style="color: var(--text-muted);">Manage your Google Health connection and data.</p>
     </div>
 
-    <!-- Withdraw Modal -->
-    <div id="withdraw-modal" class="modal">
-        <div class="modal-content">
-            <h2>Withdraw from Study?</h2>
-            <p>This will permanently delete all your stored data from our database.</p>
-            <div class="warning-box"><strong>This action cannot be undone.</strong></div>
-            <div class="btn-group">
-                <button class="btn btn-secondary" onclick="hideModal('withdraw-modal')">Cancel</button>
-                <form action="/dashboard/withdraw" method="POST" style="display:inline;">
-                    <button type="submit" class="btn btn-danger">Withdraw from Study</button>
-                </form>
+    <div class="card" style="margin-bottom: 24px;">
+        <h3 style="margin-bottom: 16px;">Account Information</h3>
+        <div style="display: flex; gap: 32px; flex-wrap: wrap;">
+            <div>
+                <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Legacy ID</span>
+                <p style="font-family: monospace; font-size: 1.1rem; font-weight: 600;">{{ legacy_id }}</p>
+            </div>
+            <div>
+                <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Health ID</span>
+                <p style="font-family: monospace; font-size: 1.1rem; font-weight: 600;">{{ health_id }}</p>
             </div>
         </div>
     </div>
 
-    <!-- Disconnect Modal -->
-    <div id="disconnect-modal" class="modal">
-        <div class="modal-content">
-            <h2>Disconnect Account?</h2>
-            <p>This will disconnect your Google Health account. You'll need to go through the OAuth flow again to reconnect.</p>
-            <div class="warning-box"><strong>This action cannot be undone.</strong></div>
-            <div class="btn-group">
-                <button class="btn btn-secondary" onclick="hideModal('disconnect-modal')">Cancel</button>
-                <form action="/dashboard/disconnect" method="POST" style="display:inline;">
-                    <button type="submit" class="btn btn-danger">Disconnect</button>
-                </form>
-            </div>
+    <div class="grid-3">
+        <a href="/dashboard/data" class="card" style="text-decoration: none; color: inherit; display: block;">
+            <div class="card-icon"></div>
+            <h3>See My Data</h3>
+            <p>View your health data from Google Health (activity, sleep, heart rate, etc.)</p>
+        </a>
+        
+        <div class="card" style="cursor: pointer;" onclick="showModal('withdraw-modal')">
+            <div class="card-icon" style="background: #fef2f2; color: #dc2626;">🗑️</div>
+            <h3 style="color: #dc2626;">Withdraw from Study</h3>
+            <p>Delete all your stored data from our database. Your Google connection will remain active.</p>
+        </div>
+        
+        <div class="card" style="cursor: pointer;" onclick="showModal('disconnect-modal')">
+            <div class="card-icon" style="background: #fff7ed; color: #ea580c;">🔌</div>
+            <h3 style="color: #ea580c;">Disconnect</h3>
+            <p>Revoke Google access and delete all data. You'll need to reconnect to use the service again.</p>
         </div>
     </div>
+</div>
 
-    <!-- Revoke Modal -->
-    <div id="revoke-modal" class="modal">
-        <div class="modal-content">
-            <h2>⛔ Revoke Token</h2>
-            <p>To revoke your Google Health access token, please contact our support team.</p>
-            <div class="info-box">
-                <p><strong>📧 Contact Support</strong></p>
-                <p>Send an email to <a href="mailto:random@gmail.com?subject=Request%20to%20Revoke%20Token%20-%20{{ legacy_id }}">random@gmail.com</a></p>
-                <p>Include your Legacy ID: <code>{{ legacy_id }}</code></p>
-            </div>
-            <div class="btn-group">
-                <button class="btn btn-secondary" onclick="hideModal('revoke-modal')">Close</button>
-                <a href="mailto:random@gmail.com?subject=Request%20to%20Revoke%20Token%20-%20{{ legacy_id }}&body=Hello,%0A%0AI would like to revoke my Google Health access token.%0A%0AMy Legacy ID: {{ legacy_id }}%0A%0AThank you." class="btn btn-primary">
-                    ✉️ Send Email
-                </a>
-            </div>
+<!-- Withdraw Modal -->
+<div id="withdraw-modal" class="modal">
+    <div class="modal-content">
+        <h2 style="margin-bottom: 16px;">Withdraw from Study?</h2>
+        <p style="margin-bottom: 16px; color: var(--text-muted);">This will permanently delete all your stored data from our database.</p>
+        <div class="warning-box" style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 12px; border-radius: 6px; margin-bottom: 24px;">
+            <strong style="color: #dc2626;">This action cannot be undone.</strong>
+        </div>
+        <div class="btn-group" style="display: flex; gap: 12px; justify-content: flex-end;">
+            <button class="btn btn-outline" onclick="hideModal('withdraw-modal')">Cancel</button>
+            <form action="/dashboard/withdraw" method="POST" style="display:inline;">
+                <button type="submit" class="btn" style="background: #dc2626; color: white;">Withdraw from Study</button>
+            </form>
         </div>
     </div>
+</div>
 
-    <script>
-        function showModal(id) { document.getElementById(id).classList.add('active'); }
-        function hideModal(id) { document.getElementById(id).classList.remove('active'); }
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-            }
+<!-- Disconnect Modal -->
+<div id="disconnect-modal" class="modal">
+    <div class="modal-content">
+        <h2 style="margin-bottom: 16px;">Disconnect Account?</h2>
+        <p style="margin-bottom: 16px; color: var(--text-muted);">This will disconnect your Google Health account. You'll need to go through the OAuth flow again to reconnect.</p>
+        <div class="warning-box" style="background: #fff7ed; border-left: 4px solid #ea580c; padding: 12px; border-radius: 6px; margin-bottom: 24px;">
+            <strong style="color: #ea580c;">This action cannot be undone.</strong>
+        </div>
+        <div class="btn-group" style="display: flex; gap: 12px; justify-content: flex-end;">
+            <button class="btn btn-outline" onclick="hideModal('disconnect-modal')">Cancel</button>
+            <form action="/dashboard/disconnect" method="POST" style="display:inline;">
+                <button type="submit" class="btn" style="background: #ea580c; color: white;">Disconnect</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showModal(id) { 
+        document.getElementById(id).classList.add('active'); 
+    }
+    function hideModal(id) { 
+        document.getElementById(id).classList.remove('active'); 
+    }
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.classList.remove('active');
         }
-    </script>
-</body>
-</html>
+    }
+</script>
+{% endblock %}

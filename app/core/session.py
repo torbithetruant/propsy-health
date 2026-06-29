@@ -64,8 +64,8 @@ async def get_current_user_with_consent(request: Request) -> SessionUser:
     return user
 
 
-async def get_optional_user(request: Request) -> Optional[SessionUser]:
-    """Get current user if authenticated, None otherwise."""
+async def get_optional_user(request: Request) -> SessionUser | None:
+    """Get current user if authenticated, None otherwise. Does NOT raise exceptions."""
     legacy_id = request.session.get("legacy_id")
     health_id = request.session.get("health_id")
     
