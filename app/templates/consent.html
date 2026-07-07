@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Informed Consent - Propsy Health{% endblock %}
+{% block title %}{{ t('informed_consent') }} - {{ t('propsy_health') }}{% endblock %}
 
 {% block content %}
 <div style="padding: 40px 20px;">
@@ -9,22 +9,21 @@
         <!-- Header -->
         <div style="text-align: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 2px solid var(--border);">
             <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px;">
-                📋 Informed Consent
+                <i class="fa-solid fa-clipboard-list" style="margin-right: 8px;"></i> {{ t('informed_consent') }}
             </h1>
             <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 16px;">
-                Propsy Health Data Synchronization Study
+                {{ t('consent_study_name') }}
             </p>
             <span class="badge" style="background: #eef2ff; color: var(--primary); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">
-                Version {{ consent_version }}
+                {{ t('consent_version') }} {{ consent_version }}
             </span>
         </div>
         
         <!-- Introduction -->
         <div class="card" style="margin-bottom: 32px; background: #f8fafc; border: none;">
             <p style="font-size: 1.05rem; color: var(--text-main); line-height: 1.7;">
-                <strong>Please read this document carefully before proceeding.</strong> 
-                It explains what this study involves, why it is being conducted, and what will happen to your data. 
-                You may save or print this page at any time using your browser's print function (Ctrl+P / Cmd+P).
+                <strong>{{ t('consent_intro_bold') }}</strong> 
+                {{ t('consent_intro_text') }}
             </p>
         </div>
         
@@ -34,51 +33,51 @@
             <!-- Section 1 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.4rem;">🎯</span> 1. Nature, Purpose, and Duration
+                    <span style="font-size: 1.4rem;"><i class="fa-solid fa-bullseye"></i></span> 1. {{ t('consent_section1_title') }}
                 </h2>
                 <p style="color: var(--text-muted); margin-bottom: 8px;">
-                    <strong style="color: var(--text-main);">What is this study?</strong> A health data synchronization study that collects daily fitness, sleep, and heart rate metrics from your Google Health account.
+                    <strong style="color: var(--text-main);">{{ t('consent_what_is_study') }}</strong> {{ t('consent_section1_desc1') }}
                 </p>
                 <p style="color: var(--text-muted); margin-bottom: 8px;">
-                    <strong style="color: var(--text-main);">Purpose:</strong> To help you visualize and understand your personal health trends over time.
+                    <strong style="color: var(--text-main);">{{ t('consent_purpose') }}:</strong> {{ t('consent_section1_desc2') }}
                 </p>
                 <p style="color: var(--text-muted);">
-                    <strong style="color: var(--text-main);">Duration:</strong> As long as your account remains connected. You may withdraw at any time without penalty.
+                    <strong style="color: var(--text-main);">{{ t('consent_duration') }}:</strong> {{ t('consent_section1_desc3') }}
                 </p>
             </div>
 
             <!-- Section 2 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.4rem;">⚖️</span> 2. Risks and Benefits
+                    <span style="font-size: 1.4rem;"><i class="fa-solid fa-scale-balanced"></i></span> 2. {{ t('consent_section2_title') }}
                 </h2>
                 <p style="color: var(--text-muted); margin-bottom: 8px;">
-                    <strong style="color: var(--text-main);">Benefits:</strong> Personalized dashboard, sleep and heart rate visualization, historical tracking of your health metrics.
+                    <strong style="color: var(--text-main);">{{ t('consent_benefits') }}:</strong> {{ t('consent_section2_desc1') }}
                 </p>
                 <p style="color: var(--text-muted); margin-bottom: 12px;">
-                    <strong style="color: var(--text-main);">Risks:</strong> Small privacy risk (data breach despite security measures), emotional risk (viewing health data may cause anxiety).
+                    <strong style="color: var(--text-main);">{{ t('consent_risks') }}:</strong> {{ t('consent_section2_desc2') }}
                 </p>
                 <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 6px; margin-top: 12px;">
-                    <strong style="color: #92400e;">⚠️ Important:</strong> 
-                    <span style="color: #92400e;">This tool is NOT a medical device. Always consult a qualified healthcare professional for medical decisions.</span>
+                    <strong style="color: #92400e;"><i class="fa-solid fa-triangle-exclamation" style="margin-right: 6px;"></i> {{ t('consent_important') }}:</strong> 
+                    <span style="color: #92400e;">{{ t('consent_not_medical_device') }}</span>
                 </div>
             </div>
 
             <!-- Section 3 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.4rem;">🔒</span> 3. Privacy and Security
+                    <span style="font-size: 1.4rem;"><i class="fa-solid fa-lock"></i></span> 3. {{ t('consent_section3_title') }}
                 </h2>
                 <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8;">
-                    <li><strong style="color: var(--text-main);">Encryption at rest:</strong> OAuth tokens and raw biometric data are encrypted using AES-256.</li>
-                    <li><strong style="color: var(--text-main);">Encryption in transit:</strong> All data is protected with TLS/SSL (HTTPS).</li>
-                    <li><strong style="color: var(--text-main);">No third-party sharing:</strong> Your data is never sold, rented, or shared.</li>
+                    <li><strong style="color: var(--text-main);">{{ t('consent_encryption_rest') }}:</strong> {{ t('consent_encryption_rest_desc') }}</li>
+                    <li><strong style="color: var(--text-main);">{{ t('consent_encryption_transit') }}:</strong> {{ t('consent_encryption_transit_desc') }}</li>
+                    <li><strong style="color: var(--text-main);">{{ t('consent_no_sharing') }}:</strong> {{ t('consent_no_sharing_desc') }}</li>
                 </ul>
                 <div style="background: #eef2ff; border-left: 4px solid var(--primary); padding: 12px 16px; border-radius: 6px; margin-top: 16px;">
-                    <strong style="color: var(--primary);">🔗 Google API Limited Use:</strong> 
-                    <span style="color: var(--text-main);">We adhere to the 
-                        <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" style="color: var(--primary);">Google API Services User Data Policy</a>, 
-                        including the Limited Use requirements.
+                    <strong style="color: var(--primary);"><i class="fa-solid fa-link" style="margin-right: 6px;"></i> {{ t('consent_google_api') }}:</strong> 
+                    <span style="color: var(--text-main);">{{ t('consent_google_api_desc1') }}
+                        <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" style="color: var(--primary);">{{ t('consent_google_api_link') }}</a>, 
+                        {{ t('consent_google_api_desc2') }}
                     </span>
                 </div>
             </div>
@@ -86,74 +85,74 @@
             <!-- Section 4 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.4rem;">📧</span> 4. Contact
+                    <span style="font-size: 1.4rem;"><i class="fa-solid fa-envelope"></i></span> 4. {{ t('consent_section4_title') }}
                 </h2>
                 <p style="color: var(--text-muted);">
-                    If you have any questions about this study or your data, please contact us at:
+                    {{ t('consent_contact_intro') }}
                 </p>
                 <p style="margin-top: 8px;">
-                    <strong style="color: var(--text-main);">Propsy Health Research Team</strong><br>
-                    Email: <a href="mailto:research@your-domain.com" style="color: var(--primary);">research@your-domain.com</a><br>
-                    Privacy Officer: <a href="mailto:privacy@your-domain.com" style="color: var(--primary);">privacy@your-domain.com</a>
+                    <strong style="color: var(--text-main);">{{ t('consent_research_team') }}</strong><br>
+                    {{ t('email') }}: <a href="mailto:research@your-domain.com" style="color: var(--primary);">research@your-domain.com</a><br>
+                    {{ t('consent_privacy_officer') }}: <a href="mailto:privacy@your-domain.com" style="color: var(--primary);">privacy@your-domain.com</a>
                 </p>
             </div>
 
             <!-- Section 5 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.4rem;">📅</span> 5. Data Retention
+                    <span style="font-size: 1.4rem;"><i class="fa-solid fa-calendar-days"></i></span> 5. {{ t('consent_section5_title') }}
                 </h2>
                 <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8;">
-                    <li><strong style="color: var(--text-main);">Active participation:</strong> Your health data is retained for the entire duration of your participation.</li>
-                    <li><strong style="color: var(--text-main);">After withdrawal:</strong> Upon withdrawal, all your health data is permanently deleted within 30 days.</li>
-                    <li><strong style="color: var(--text-main);">OAuth tokens:</strong> Deleted immediately upon disconnection.</li>
+                    <li><strong style="color: var(--text-main);">{{ t('consent_active_participation') }}:</strong> {{ t('consent_active_participation_desc') }}</li>
+                    <li><strong style="color: var(--text-main);">{{ t('consent_after_withdrawal') }}:</strong> {{ t('consent_after_withdrawal_desc') }}</li>
+                    <li><strong style="color: var(--text-main);">{{ t('consent_oauth_tokens') }}:</strong> {{ t('consent_oauth_tokens_desc') }}</li>
                 </ul>
             </div>
 
             <!-- Section 6 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.4rem;">🚪</span> 6. How to Withdraw
+                    <span style="font-size: 1.4rem;"><i class="fa-solid fa-door-open"></i></span> 6. {{ t('consent_section6_title') }}
                 </h2>
                 <p style="color: var(--text-muted); margin-bottom: 8px;">
-                    You may withdraw from this study at any time, for any reason, without penalty:
+                    {{ t('consent_withdraw_intro') }}
                 </p>
                 <ol style="padding-left: 24px; color: var(--text-muted); line-height: 1.8;">
-                    <li>Log in to your Propsy Health Dashboard</li>
-                    <li>Click on <strong style="color: var(--text-main);">"Withdraw from Study"</strong> or <strong style="color: var(--text-main);">"Disconnect"</strong></li>
-                    <li>Confirm your withdrawal</li>
-                    <li>Your data will be deleted and your Google access revoked</li>
+                    <li>{{ t('consent_withdraw_step1') }}</li>
+                    <li>{{ t('consent_withdraw_step2_prefix') }} <strong style="color: var(--text-main);">"{{ t('withdraw_from_study') }}"</strong> {{ t('consent_withdraw_step2_or') }} <strong style="color: var(--text-main);">"{{ t('disconnect') }}"</strong></li>
+                    <li>{{ t('consent_withdraw_step3') }}</li>
+                    <li>{{ t('consent_withdraw_step4') }}</li>
                 </ol>
                 <p style="color: var(--text-muted); margin-top: 12px;">
-                    Alternatively, you can revoke our access directly from your 
-                    <a href="https://myaccount.google.com/permissions" target="_blank" style="color: var(--primary);">Google Account Permissions page</a>.
+                    {{ t('consent_withdraw_alt') }}
+                    <a href="https://myaccount.google.com/permissions" target="_blank" style="color: var(--primary);">{{ t('consent_google_permissions') }}</a>.
                 </p>
             </div>
 
             <!-- Section 7 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.4rem;">🗑️</span> 7. How to Delete Data
+                    <span style="font-size: 1.4rem;"><i class="fa-solid fa-trash-can"></i></span> 7. {{ t('consent_section7_title') }}
                 </h2>
                 <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8;">
-                    <li><strong style="color: var(--text-main);">From the Dashboard:</strong> Click "Delete Data" to remove all cached health records while keeping your connection active.</li>
-                    <li><strong style="color: var(--text-main);">Full Deletion:</strong> Click "Disconnect" to revoke Google access AND delete all data from our servers.</li>
-                    <li><strong style="color: var(--text-main);">After study completion:</strong> Your individual records can be deleted upon request by emailing <a href="mailto:privacy@your-domain.com" style="color: var(--primary);">privacy@your-domain.com</a>.</li>
+                    <li><strong style="color: var(--text-main);">{{ t('consent_from_dashboard') }}:</strong> {{ t('consent_from_dashboard_desc') }}</li>
+                    <li><strong style="color: var(--text-main);">{{ t('consent_full_deletion') }}:</strong> {{ t('consent_full_deletion_desc') }}</li>
+                    <li><strong style="color: var(--text-main);">{{ t('consent_after_completion') }}:</strong> {{ t('consent_after_completion_desc') }} <a href="mailto:privacy@your-domain.com" style="color: var(--primary);">privacy@your-domain.com</a>.</li>
                 </ul>
             </div>
 
             <!-- Section 8 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.4rem;">📄</span> 8. Additional Documents
+                    <span style="font-size: 1.4rem;"><i class="fa-solid fa-file-lines"></i></span> 8. {{ t('consent_section8_title') }}
                 </h2>
                 <p style="color: var(--text-muted);">
-                    The following documents are available upon request:
+                    {{ t('consent_documents_intro') }}
                 </p>
                 <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8; margin-top: 8px;">
-                    <li>Full Privacy Policy: <a href="/privacy" style="color: var(--primary);">/privacy</a></li>
-                    <li>Terms of Service: <a href="/privacy" style="color: var(--primary);">/privacy</a></li>
-                    <li>IRB/EC Approval Documentation: Available by emailing <a href="mailto:research@your-domain.com" style="color: var(--primary);">research@your-domain.com</a></li>
+                    <li>{{ t('consent_full_privacy_policy') }}: <a href="/privacy" style="color: var(--primary);">/privacy</a></li>
+                    <li>{{ t('consent_terms_of_service') }}: <a href="/privacy" style="color: var(--primary);">/privacy</a></li>
+                    <li>{{ t('consent_irb_documentation') }}: <a href="mailto:research@your-domain.com" style="color: var(--primary);">research@your-domain.com</a></li>
                 </ul>
             </div>
             
@@ -163,42 +162,41 @@
         <form method="POST" action="/consent" id="consent-form">
             <div class="card" style="background: #f8fafc; border: 2px dashed var(--primary); margin-bottom: 32px;">
                 <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
-                    ✍️ Your Consent
+                    <i class="fa-solid fa-signature"></i> {{ t('consent_your_consent') }}
                 </h2>
                 <p style="color: var(--text-muted); margin-bottom: 24px; line-height: 1.7;">
-                    By checking the boxes below, you acknowledge that you have read and understood this Informed Consent document, 
-                    that you have had the opportunity to ask questions, and that you voluntarily agree to participate in this study.
+                    {{ t('consent_signature_intro') }}
                 </p>
                 
                 <div class="checkbox-group">
                     <input type="checkbox" id="consent_read" name="consent_read" required>
-                    <label for="consent_read">I confirm that I have read and understood this Informed Consent document in its entirety.</label>
+                    <label for="consent_read">{{ t('consent_checkbox1') }}</label>
                 </div>
                 <div class="checkbox-group">
                     <input type="checkbox" id="consent_voluntary" name="consent_voluntary" required>
-                    <label for="consent_voluntary">I understand that my participation is voluntary and that I may withdraw at any time without penalty.</label>
+                    <label for="consent_voluntary">{{ t('consent_checkbox2') }}</label>
                 </div>
                 <div class="checkbox-group">
                     <input type="checkbox" id="consent_data" name="consent_data" required>
-                    <label for="consent_data">I consent to Propsy Health accessing, storing, and processing my Google Health data as described above.</label>
+                    <label for="consent_data">{{ t('consent_checkbox3') }}</label>
                 </div>
                 
                 <div class="btn-group" style="margin-top: 32px;">
-                    <button type="submit" class="btn btn-primary" id="submit-btn" disabled>✅ I Agree — Continue to Dashboard</button>
-                    <button type="button" class="btn btn-outline" onclick="window.print()">🖨️ Save / Print Copy</button>
-                    <a href="/" class="btn btn-outline">❌ Decline</a>
+                    <button type="submit" class="btn btn-primary" id="submit-btn" disabled><i class="fa-solid fa-check" style="margin-right: 6px;"></i> {{ t('consent_agree_continue') }}</button>
+                    <button type="button" class="btn btn-outline" onclick="window.print()"><i class="fa-solid fa-print" style="margin-right: 6px;"></i> {{ t('consent_save_print') }}</button>
+                    <a href="/" class="btn btn-outline"><i class="fa-solid fa-xmark" style="margin-right: 6px;"></i> {{ t('consent_decline') }}</a>
                 </div>
             </div>
         </form>
         
         <!-- Footer -->
         <div style="text-align: center; padding: 24px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem;">
-            <p style="margin-bottom: 8px;">📅 Date of consent: <span id="current-date" style="font-weight: 600; color: var(--text-main);"></span></p>
-            <p style="margin-bottom: 16px;">🔐 Your consent is recorded securely with timestamp and IP address for audit purposes.</p>
+            <p style="margin-bottom: 8px;"><i class="fa-solid fa-calendar-days" style="margin-right: 6px;"></i> {{ t('consent_date_of_consent') }} <span id="current-date" style="font-weight: 600; color: var(--text-main);"></span></p>
+            <p style="margin-bottom: 16px;"><i class="fa-solid fa-shield-halved" style="margin-right: 6px;"></i> {{ t('consent_recorded_securely') }}</p>
             <p>
-                <a href="/privacy" style="color: var(--primary);">Privacy Policy</a> · 
-                <a href="/privacy" style="color: var(--primary);">Terms of Service</a> · 
-                <a href="mailto:research@your-domain.com" style="color: var(--primary);">Contact Research Team</a>
+                <a href="/privacy" style="color: var(--primary);">{{ t('privacy_policy') }}</a> · 
+                <a href="/privacy" style="color: var(--primary);">{{ t('terms_of_service') }}</a> · 
+                <a href="mailto:research@your-domain.com" style="color: var(--primary);">{{ t('consent_contact_research') }}</a>
             </p>
         </div>
         
@@ -206,7 +204,10 @@
 </div>
 
 <script>
-    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    // Format date based on current language
+    const currentLang = '{{ current_lang | default("en") }}';
+    const dateLocale = currentLang === 'fr' ? 'fr-FR' : 'en-US';
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
     
     const checkboxes = document.querySelectorAll('#consent-form input[type="checkbox"][required]');
     const submitBtn = document.getElementById('submit-btn');

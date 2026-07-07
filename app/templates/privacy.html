@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Privacy Policy - Propsy Health{% endblock %}
+{% block title %}{{ t('privacy_policy') }} - Propsy Health{% endblock %}
 
 {% block content %}
 <div style="padding: 40px 20px;">
@@ -9,19 +9,17 @@
         <!-- Header -->
         <div style="text-align: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 2px solid var(--border);">
             <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px;">
-                🔒 Privacy Policy
+                <i class="fa-solid fa-lock" style="margin-right: 8px;"></i> {{ t('privacy_policy') }}
             </h1>
             <p style="font-size: 0.95rem; color: var(--text-muted);">
-                Last Updated: June 23, 2026
+                {{ t('last_updated') }}: {{ t('privacy_last_updated_date') }}
             </p>
         </div>
         
         <!-- Introduction -->
         <div class="card" style="margin-bottom: 32px; background: #f8fafc; border: none;">
             <p style="font-size: 1.05rem; color: var(--text-main); line-height: 1.7;">
-                Welcome to Propsy Health. We respect your privacy and are committed to protecting your personal data. 
-                This Privacy Policy explains how we collect, use, store, and share your information when you use our platform, 
-                specifically regarding data obtained from Google APIs.
+                {{ t('privacy_intro') }}
             </p>
         </div>
         
@@ -31,39 +29,39 @@
             <!-- Section 1 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                    1. Information We Collect
+                    1. {{ t('privacy_section1_title') }}
                 </h2>
                 <p style="color: var(--text-muted); margin-bottom: 12px;">
-                    When you connect your Google Health account to Propsy Health, you explicitly grant us permission to access specific health and fitness data. We only request the data necessary to provide our core synchronization and visualization services. This includes:
+                    {{ t('privacy_section1_desc') }}
                 </p>
                 <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8;">
-                    <li><strong style="color: var(--text-main);">Profile Information:</strong> Basic Google account profile data to identify your account.</li>
-                    <li><strong style="color: var(--text-main);">Activity and Fitness Data:</strong> Step counts, calories burned, and wear time.</li>
-                    <li><strong style="color: var(--text-main);">Health Metrics:</strong> Heart rate data (average, max, resting, and raw intervals).</li>
-                    <li><strong style="color: var(--text-main);">Sleep Data:</strong> Sleep duration, sleep stages (deep, light, REM), and sleep efficiency.</li>
+                    <li><strong style="color: var(--text-main);">{{ t('privacy_profile_info') }}:</strong> {{ t('privacy_profile_info_desc') }}</li>
+                    <li><strong style="color: var(--text-main);">{{ t('privacy_activity_data') }}:</strong> {{ t('privacy_activity_data_desc') }}</li>
+                    <li><strong style="color: var(--text-main);">{{ t('privacy_health_metrics') }}:</strong> {{ t('privacy_health_metrics_desc') }}</li>
+                    <li><strong style="color: var(--text-main);">{{ t('privacy_sleep_data') }}:</strong> {{ t('privacy_sleep_data_desc') }}</li>
                 </ul>
             </div>
 
             <!-- Section 2 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                    2. How We Use Your Information
+                    2. {{ t('privacy_section2_title') }}
                 </h2>
                 <p style="color: var(--text-muted); margin-bottom: 12px;">
-                    We use the data collected from Google Health solely to:
+                    {{ t('privacy_section2_desc') }}
                 </p>
                 <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8;">
-                    <li>Provide the core functionality of the Propsy Health dashboard.</li>
-                    <li>Display your daily health metrics, trends, and summaries.</li>
-                    <li>Synchronize your health records securely to your Propsy platform account.</li>
+                    <li>{{ t('privacy_use1') }}</li>
+                    <li>{{ t('privacy_use2') }}</li>
+                    <li>{{ t('privacy_use3') }}</li>
                 </ul>
                 
                 <div style="background: #eef2ff; border-left: 4px solid var(--primary); padding: 12px 16px; border-radius: 6px; margin-top: 16px;">
-                    <strong style="color: var(--primary);">Google API Services User Data Policy & Limited Use Requirements:</strong>
+                    <strong style="color: var(--primary);">{{ t('privacy_google_policy_title') }}:</strong>
                     <p style="color: var(--text-main); margin-top: 8px; line-height: 1.6;">
-                        Propsy Health's use and transfer to any other app of information received from Google APIs will adhere to the 
-                        <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" style="color: var(--primary);">Google API Services User Data Policy</a>, 
-                        including the <a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes" target="_blank" style="color: var(--primary);">Limited Use requirements</a>.
+                        {{ t('privacy_google_policy_desc1') }}
+                        <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" style="color: var(--primary);">{{ t('privacy_google_policy_link1') }}</a>, 
+                        {{ t('privacy_google_policy_desc2') }} <a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes" target="_blank" style="color: var(--primary);">{{ t('privacy_google_policy_link2') }}</a>.
                     </p>
                 </div>
             </div>
@@ -71,55 +69,54 @@
             <!-- Section 3 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                    3. Data Storage and Security
+                    3. {{ t('privacy_section3_title') }}
                 </h2>
                 <p style="color: var(--text-muted); margin-bottom: 12px;">
-                    Your security is our top priority. All health data retrieved from Google is stored securely in our encrypted databases.
+                    {{ t('privacy_section3_desc') }}
                 </p>
                 <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8;">
-                    <li><strong style="color: var(--text-main);">Encryption at Rest:</strong> Highly sensitive raw biometric data and OAuth tokens are encrypted using industry-standard AES-256 (Fernet) encryption before being written to the database.</li>
-                    <li><strong style="color: var(--text-main);">Encryption in Transit:</strong> All data transmitted between your browser, our servers, and Google's APIs is encrypted using TLS/SSL (HTTPS).</li>
-                    <li><strong style="color: var(--text-main);">Access Controls:</strong> Only authorized backend services have access to the decryption keys required to process your health data.</li>
+                    <li><strong style="color: var(--text-main);">{{ t('privacy_encryption_rest') }}:</strong> {{ t('privacy_encryption_rest_desc') }}</li>
+                    <li><strong style="color: var(--text-main);">{{ t('privacy_encryption_transit') }}:</strong> {{ t('privacy_encryption_transit_desc') }}</li>
+                    <li><strong style="color: var(--text-main);">{{ t('privacy_access_controls') }}:</strong> {{ t('privacy_access_controls_desc') }}</li>
                 </ul>
             </div>
 
             <!-- Section 4 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                    4. Data Sharing and Third Parties
+                    4. {{ t('privacy_section4_title') }}
                 </h2>
                 <p style="color: var(--text-muted); line-height: 1.7;">
-                    <strong style="color: var(--text-main);">We do not sell, rent, or trade your Google Health data to third parties.</strong> 
-                    We do not use your health data for advertising, marketing, or any purpose other than providing the Propsy Health service to you. 
-                    Your data is never transferred to other applications or third-party services without your explicit, separate consent.
+                    <strong style="color: var(--text-main);">{{ t('privacy_no_sell') }}</strong> 
+                    {{ t('privacy_no_sell_desc') }}
                 </p>
             </div>
 
             <!-- Section 5 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                    5. Your Rights: Revoking Access and Deleting Data
+                    5. {{ t('privacy_section5_title') }}
                 </h2>
                 <p style="color: var(--text-muted); margin-bottom: 12px;">
-                    You have full control over your data and your connection to Google Health. You can revoke our access at any time:
+                    {{ t('privacy_section5_desc') }}
                 </p>
                 <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8;">
-                    <li><strong style="color: var(--text-main);">In-App Deletion:</strong> By logging into your Propsy Health Dashboard and clicking <strong style="color: var(--text-main);">"Disconnect"</strong> or <strong style="color: var(--text-main);">"Delete Data"</strong>, we will immediately permanently delete all your cached health records from our database and revoke our access token via Google's API.</li>
-                    <li><strong style="color: var(--text-main);">Google Account Settings:</strong> You can revoke Propsy Health's access at any time by visiting your <a href="https://myaccount.google.com/permissions" target="_blank" style="color: var(--primary);">Google Account Permissions page</a> and removing Propsy Health from your authorized apps.</li>
+                    <li><strong style="color: var(--text-main);">{{ t('privacy_in_app_deletion') }}:</strong> {{ t('privacy_in_app_deletion_desc') }}</li>
+                    <li><strong style="color: var(--text-main);">{{ t('privacy_google_settings') }}:</strong> {{ t('privacy_google_settings_desc1') }} <a href="https://myaccount.google.com/permissions" target="_blank" style="color: var(--primary);">{{ t('privacy_google_settings_link') }}</a> {{ t('privacy_google_settings_desc2') }}</li>
                 </ul>
             </div>
 
             <!-- Section 6 -->
             <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
                 <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                    6. Contact Us
+                    6. {{ t('privacy_section6_title') }}
                 </h2>
                 <p style="color: var(--text-muted); margin-bottom: 12px;">
-                    If you have any questions about this Privacy Policy or our data practices, please contact us at:
+                    {{ t('privacy_section6_desc') }}
                 </p>
                 <p style="margin-top: 12px;">
-                    <strong style="color: var(--text-main);">Propsy Health Support</strong><br>
-                    Email: <a href="mailto:privacy@your-domain.com" style="color: var(--primary);">privacy@your-domain.com</a>
+                    <strong style="color: var(--text-main);">{{ t('privacy_support_team') }}</strong><br>
+                    {{ t('email') }}: <a href="mailto:privacy@your-domain.com" style="color: var(--primary);">privacy@your-domain.com</a>
                 </p>
             </div>
             
@@ -127,7 +124,7 @@
         
         <!-- Footer -->
         <div style="text-align: center; padding: 24px; border-top: 1px solid var(--border);">
-            <a href="/" class="btn btn-outline">← Back to Homepage</a>
+            <a href="/" class="btn btn-outline">← {{ t('back_to_homepage') }}</a>
         </div>
         
     </div>

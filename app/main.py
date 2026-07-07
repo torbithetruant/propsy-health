@@ -1,11 +1,11 @@
 """FastAPI application entry point."""
 import signal
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, JSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.config import get_settings
@@ -15,13 +15,12 @@ from app.core.logging import setup_logging, get_logger
 from app.core.security import setup_security
 from app.core.session_validator import SessionValidationMiddleware
 from app.api.admin import AdminAuthError
-
+from app.core.language import LanguageMiddleware
 
 # Initialize logging
 setup_logging()
 logger = get_logger(__name__)
 settings = get_settings()
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -43,7 +42,6 @@ async def lifespan(app: FastAPI):
     logger.info("🛑 Shutting down Sanpsy Health OAuth Connector")
     await close_mongodb()
 
-
 def create_app() -> FastAPI:
     """Create and configure FastAPI application."""
     
@@ -58,9 +56,18 @@ def create_app() -> FastAPI:
 
     setup_security(app)
 
+    # ==========================================
+    # MIDDLEWARES (Order matters!)
+    # Added first -> Runs last (closest to your app routes)
+    # ==========================================
+    
+    # 1. Session Validation (Needs session, so it must run after SessionMiddleware)
     app.add_middleware(SessionValidationMiddleware)
     
-    # Security Middleware
+    # 2. Language Middleware (Needs session, so it must run after SessionMiddleware)
+    app.add_middleware(LanguageMiddleware)
+    
+    # 3. Session Middleware (Populates request.session)
     app.add_middleware(
         SessionMiddleware,
         secret_key=settings.secret_key,
@@ -68,6 +75,7 @@ def create_app() -> FastAPI:
         same_site="lax"
     )
     
+    # 4. CORS Middleware
     app.add_middleware(
         CORSMiddleware,
         allow_origins=[settings.base_url] if settings.is_production else ["*"],
@@ -76,6 +84,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     
+    # 5. GZip Middleware (Added last -> Runs first on incoming request)
     app.add_middleware(GZipMiddleware, minimum_size=1000)
     
     # Static files and templates
@@ -83,27 +92,34 @@ def create_app() -> FastAPI:
     
     # Register routers
     app.include_router(auth.public_router)  # Public OAuth endpoints
-    app.include_router(auth.router)  # API endpoints
+    app.include_router(auth.router)         # API endpoints
     app.include_router(dashboard.router)
     app.include_router(health_data.router)
     app.include_router(consent.router)
     app.include_router(admin.router)
     
-    # Root redirect to homepage
+    # Root health check
     @app.get("/health")
     async def root_health():
         """Root health check."""
         from app.database import health_check
         return await health_check()
     
-    # Global exception handler
+    # ==========================================
+    # EXCEPTION HANDLERS
+    # ==========================================
+    
     @app.exception_handler(Exception)
     async def global_exception_handler(request: Request, exc: Exception):
+        """Catch-all for unhandled exceptions."""
         logger.error(f"Unhandled exception: {exc}", exc_info=True)
-        return {
-            "detail": "Internal server error",
-            "error_type": type(exc).__name__
-        }, status.HTTP_500_INTERNAL_SERVER_ERROR
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "detail": "Internal server error",
+                "error_type": type(exc).__name__
+            }
+        )
     
     @app.exception_handler(HTTPException)
     async def custom_http_exception_handler(request: Request, exc: HTTPException):
@@ -128,14 +144,13 @@ def create_app() -> FastAPI:
             status_code=exc.status_code
         )
     
-    # Add the Admin Auth Exception Handler
     @app.exception_handler(AdminAuthError)
     async def admin_auth_error_handler(request: Request, exc: AdminAuthError):
+        """Redirect unauthenticated admins to the login page."""
         return RedirectResponse(url="/admin/login", status_code=303)
         
     logger.info("✅ FastAPI application configured")
     return app
-
 
 # Create app instance for uvicorn
 app = create_app()
@@ -144,7 +159,7 @@ if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
         "app.main:app",
-        host="127.0.0.1",
+        host="0.0.0.0",
         port=8080,
         reload=not settings.is_production,
         log_level=settings.log_level.lower()

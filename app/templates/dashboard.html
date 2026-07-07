@@ -1,22 +1,22 @@
 {% extends "base.html" %}
-{% block title %}Dashboard - Propsy Health{% endblock %}
+{% block title %}{{ t('dashboard') }} - {{ t('propsy_health') }}{% endblock %}
 
 {% block content %}
 <div class="container" style="padding: 40px 24px;">
     <div style="margin-bottom: 32px;">
-        <h1 style="font-size: 2rem; font-weight: 700; color: var(--text-main);">Dashboard</h1>
-        <p style="color: var(--text-muted);">Manage your Google Health connection and data.</p>
+        <h1 style="font-size: 2rem; font-weight: 700; color: var(--text-main);">{{ t('dashboard') }}</h1>
+        <p style="color: var(--text-muted);">{{ t('dashboard_manage_desc') }}</p>
     </div>
 
     <div class="card" style="margin-bottom: 24px;">
-        <h3 style="margin-bottom: 16px;">Account Information</h3>
+        <h3 style="margin-bottom: 16px;">{{ t('account_information') }}</h3>
         <div style="display: flex; gap: 32px; flex-wrap: wrap;">
             <div>
-                <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Legacy ID</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">{{ t('legacy_id') }}</span>
                 <p style="font-family: monospace; font-size: 1.1rem; font-weight: 600;">{{ legacy_id }}</p>
             </div>
             <div>
-                <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Health ID</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">{{ t('health_id') }}</span>
                 <p style="font-family: monospace; font-size: 1.1rem; font-weight: 600;">{{ health_id }}</p>
             </div>
         </div>
@@ -24,21 +24,21 @@
 
     <div class="grid-3">
         <a href="/dashboard/data" class="card" style="text-decoration: none; color: inherit; display: block;">
-            <div class="card-icon"></div>
-            <h3>See My Data</h3>
-            <p>View your health data from Google Health (activity, sleep, heart rate, etc.)</p>
+            <div class="card-icon"><i class="fa-solid fa-chart-column"></i></div>
+            <h3>{{ t('see_my_data') }}</h3>
+            <p>{{ t('view_health_data') }}</p>
         </a>
         
         <div class="card" style="cursor: pointer;" onclick="showModal('withdraw-modal')">
-            <div class="card-icon" style="background: #fef2f2; color: #dc2626;">🗑️</div>
-            <h3 style="color: #dc2626;">Withdraw from Study</h3>
-            <p>Delete all your stored data from our database. Your Google connection will remain active.</p>
+            <div class="card-icon" style="background: #fef2f2; color: #dc2626;"><i class="fa-solid fa-envelope-open-text"></i></div>
+            <h3 style="color: #dc2626;">{{ t('withdraw_from_study') }}</h3>
+            <p>{{ t('withdraw_desc') }}</p>
         </div>
         
         <div class="card" style="cursor: pointer;" onclick="showModal('disconnect-modal')">
-            <div class="card-icon" style="background: #fff7ed; color: #ea580c;">🔌</div>
-            <h3 style="color: #ea580c;">Disconnect</h3>
-            <p>Revoke Google access and delete all data. You'll need to reconnect to use the service again.</p>
+            <div class="card-icon" style="background: #fff7ed; color: #ea580c;"><i class="fa-solid fa-plug"></i></div>
+            <h3 style="color: #ea580c;">{{ t('disconnect') }}</h3>
+            <p>{{ t('disconnect_desc') }}</p>
         </div>
     </div>
 </div>
@@ -46,15 +46,15 @@
 <!-- Withdraw Modal -->
 <div id="withdraw-modal" class="modal">
     <div class="modal-content">
-        <h2 style="margin-bottom: 16px;">Withdraw from Study?</h2>
-        <p style="margin-bottom: 16px; color: var(--text-muted);">This will permanently delete all your stored data from our database.</p>
+        <h2 style="margin-bottom: 16px;">{{ t('withdraw_confirm_title') }}</h2>
+        <p style="margin-bottom: 16px; color: var(--text-muted);">{{ t('withdraw_confirm_desc') }}</p>
         <div class="warning-box" style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 12px; border-radius: 6px; margin-bottom: 24px;">
-            <strong style="color: #dc2626;">This action cannot be undone.</strong>
+            <strong style="color: #dc2626;">{{ t('action_cannot_be_undone') }}</strong>
         </div>
         <div class="btn-group" style="display: flex; gap: 12px; justify-content: flex-end;">
-            <button class="btn btn-outline" onclick="hideModal('withdraw-modal')">Cancel</button>
+            <button class="btn btn-outline" onclick="hideModal('withdraw-modal')">{{ t('cancel') }}</button>
             <form action="/dashboard/withdraw" method="POST" style="display:inline;">
-                <button type="submit" class="btn" style="background: #dc2626; color: white;">Withdraw from Study</button>
+                <button type="submit" class="btn" style="background: #dc2626; color: white;">{{ t('withdraw_from_study') }}</button>
             </form>
         </div>
     </div>
@@ -63,15 +63,15 @@
 <!-- Disconnect Modal -->
 <div id="disconnect-modal" class="modal">
     <div class="modal-content">
-        <h2 style="margin-bottom: 16px;">Disconnect Account?</h2>
-        <p style="margin-bottom: 16px; color: var(--text-muted);">This will disconnect your Google Health account. You'll need to go through the OAuth flow again to reconnect.</p>
+        <h2 style="margin-bottom: 16px;">{{ t('disconnect_confirm_title') }}</h2>
+        <p style="margin-bottom: 16px; color: var(--text-muted);">{{ t('disconnect_confirm_desc') }}</p>
         <div class="warning-box" style="background: #fff7ed; border-left: 4px solid #ea580c; padding: 12px; border-radius: 6px; margin-bottom: 24px;">
-            <strong style="color: #ea580c;">This action cannot be undone.</strong>
+            <strong style="color: #ea580c;">{{ t('action_cannot_be_undone') }}</strong>
         </div>
         <div class="btn-group" style="display: flex; gap: 12px; justify-content: flex-end;">
-            <button class="btn btn-outline" onclick="hideModal('disconnect-modal')">Cancel</button>
+            <button class="btn btn-outline" onclick="hideModal('disconnect-modal')">{{ t('cancel') }}</button>
             <form action="/dashboard/disconnect" method="POST" style="display:inline;">
-                <button type="submit" class="btn" style="background: #ea580c; color: white;">Disconnect</button>
+                <button type="submit" class="btn" style="background: #ea580c; color: white;">{{ t('disconnect') }}</button>
             </form>
         </div>
     </div>

@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_lang | default('en') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Propsy Health{% endblock %}</title>
+    <title>{% block title %}{{ t('propsy_health') }}{% endblock %}</title>
     <link rel="stylesheet" href="/static/css/main.css">
+    
+    <!-- Font Awesome CDN for Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+    
     {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -13,18 +17,30 @@
     <nav class="navbar">
         <div class="navbar-container">
             <a href="/" class="navbar-brand">
-                <span class="logo">🏥</span>
-                <span>Propsy Health</span>
+                <!-- Brand Icon: Heartbeat (Medical/Health) -->
+                <i class="fa-solid fa-heart-pulse logo" style="color: #667eea;"></i>
+                <span>{{ t('propsy_health') }}</span>
             </a>
             
             <ul class="navbar-menu">
-                <li><a href="/" class="navbar-link {% if request.url.path == '/' %}active{% endif %}">🏠 Home</a></li>
+                <!-- Home -->
+                <li><a href="/" class="navbar-link {% if request.url.path == '/' %}active{% endif %}">
+                    <i class="fa-solid fa-house"></i> {{ t('home') }}
+                </a></li>
                 
                 {% if current_user %}
-                    <li><a href="/dashboard" class="navbar-link">📊 Dashboard</a></li>
-                    <li><a href="/dashboard/data" class="navbar-link">📈 My Data</a></li>
-                    <li><a href="/privacy" class="navbar-link">🔒 Privacy</a></li>
-                    <li><a href="/contact" class="navbar-link">✉️ Contact Us</a></li>
+                    <!-- Authenticated Links -->
+                    <li><a href="/dashboard" class="navbar-link {% if request.url.path == '/dashboard' %}active{% endif %}">
+                        <i class="fa-solid fa-chart-line"></i>  {{ t('dashboard') }}
+                    </a></li>
+                    <li><a href="/privacy" class="navbar-link {% if request.url.path == '/privacy' %}active{% endif %}">
+                        <i class="fa-solid fa-shield-halved"></i>  {{ t('privacy') }}
+                    </a></li>
+                    <li><a href="/contact" class="navbar-link {% if request.url.path == '/contact' %}active{% endif %}">
+                        <i class="fa-solid fa-envelope"></i>  {{ t('contact') }}
+                    </a></li>
+                    
+                    <!-- Sign Out (POST via JS) -->
                     <li>
                         <a href="/dashboard/disconnect" 
                         onclick="event.preventDefault(); 
@@ -34,12 +50,19 @@
                         onmouseout="this.style.color='#64748b'"
                         class="navbar-link" 
                         style="color: #64748b; font-weight: 500; cursor: pointer; text-decoration: none;">
-                           🔒 Sign Out
+                           <i class="fa-solid fa-right-from-bracket"></i> {{ t('sign_out') }}
                         </a>
                     </li>
                 {% else %}
-                    <li><a href="/privacy" class="navbar-link">🔒 Privacy</a></li>
-                    <li><a href="/contact" class="navbar-link">✉️ Contact Us</a></li>
+                    <!-- Unauthenticated Links -->
+                    <li><a href="/privacy" class="navbar-link {% if request.url.path == '/privacy' %}active{% endif %}">
+                        <i class="fa-solid fa-shield-halved"></i> {{ t('privacy') }}
+                    </a></li>
+                    <li><a href="/contact" class="navbar-link {% if request.url.path == '/contact' %}active{% endif %}">
+                        <i class="fa-solid fa-envelope"></i> {{ t('contact') }}
+                    </a></li>
+                    
+                    <!-- Google Sign-In Button -->
                     <li>
                         <a href="/login" class="gsi-material-button gsi-navbar">
                             <div class="gsi-material-button-state"></div>
@@ -53,13 +76,45 @@
                                         <path fill="none" d="M0 0h48v48H0z"></path>
                                     </svg>
                                 </div>
-                                <span class="gsi-material-button-contents">Sign in with Google</span>
+                                <span class="gsi-material-button-contents">{{ t('sign_in_with_google') }}</span>
                             </div>
                         </a>
                     </li>
                 {% endif %}
+                
+                <!-- Language Switcher -->
+                <li style="margin-left: 16px; border-left: 1px solid var(--border); padding-left: 16px;">
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">
+                            <i class="fa-solid fa-globe"></i> {{ t('language') }}:
+                        </span>
+                        <a href="?lang=en" class="navbar-link {% if current_lang == 'en' %}active{% endif %}" 
+                        style="padding: 4px 8px; font-size: 0.85rem;">EN</a>
+                        <span style="color: var(--border);">|</span>
+                        <a href="?lang=fr" class="navbar-link {% if current_lang == 'fr' %}active{% endif %}" 
+                        style="padding: 4px 8px; font-size: 0.85rem;">FR</a>
+                    </div>
+                </li>
             </ul>
         </div>
+
+        <!-- IN-PRODUCT PRIVACY NOTIFICATION (MANDATORY) -->
+        {% if current_user %}
+        <div id="privacy-banner" style="background: #eef2ff; border-bottom: 1px solid #c7d2fe; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 0.9rem; color: #3730a3;">
+            <div style="display: flex; align-items: center; gap: 12px; max-width: 1200px; margin: 0 auto; width: 100%;">
+                <!-- Privacy Banner Icon -->
+                <span style="font-size: 1.2rem; flex-shrink: 0;"><i class="fa-solid fa-lock"></i></span>
+                <p style="margin: 0; line-height: 1.4;">
+                    <strong style="font-weight: 700;">{{ t('privacy_notice') }}</strong> 
+                    {{ t('privacy_banner_message') | safe }}
+                </p>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center; flex-shrink: 0;">
+                <a href="/privacy" style="color: #3730a3; font-weight: 600; text-decoration: underline;">{{ t('read_full_policy') }}</a>
+                <button onclick="document.getElementById('privacy-banner').style.display='none'; localStorage.setItem('privacyBannerDismissed', 'true')" style="background: none; border: none; color: #3730a3; font-size: 1.2rem; cursor: pointer; padding: 0; line-height: 1;">&times;</button>
+            </div>
+        </div>
+        {% endif %}
     </nav>
     
     <!-- MAIN CONTENT -->
@@ -67,5 +122,14 @@
         {% block content %}{% endblock %}
     </main>
 
+    <script>
+    // Auto-hide the privacy banner if the user has previously dismissed it
+    document.addEventListener('DOMContentLoaded', function() {
+        const banner = document.getElementById('privacy-banner');
+        if (banner && localStorage.getItem('privacyBannerDismissed') === 'true') {
+            banner.style.display = 'none';
+        }
+    });
+    </script>
 </body>
 </html>

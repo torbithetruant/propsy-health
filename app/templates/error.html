@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ title | default("Error") }} - Propsy Health{% endblock %}
+{% block title %}{{ title | default(t('error_page_title')) }} - {{ t('propsy_health') }}{% endblock %}
 
 {% block content %}
 <div style="padding: 80px 20px; text-align: center;">
@@ -10,30 +10,30 @@
             <!-- Dynamic Icon based on error type -->
             <div style="font-size: 4rem; margin-bottom: 16px;">
                 {% if title and '404' in title %}
-                    🔍
+                    <i class="fa-solid fa-magnifying-glass" style="color: #3b82f6;"></i>
                 {% elif title and '403' in title %}
-                    🚫
+                    <i class="fa-solid fa-ban" style="color: #ef4444;"></i>
                 {% elif title and '500' in title %}
-                    ⚙️
+                    <i class="fa-solid fa-gear" style="color: #f59e0b;"></i>
                 {% elif title and '401' in title %}
-                    🔒
+                    <i class="fa-solid fa-lock" style="color: #8b5cf6;"></i>
                 {% else %}
-                    ⚠️
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b;"></i>
                 {% endif %}
             </div>
             
             <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px;">
-                {{ title | default("Oops! Something went wrong") }}
+                {{ title | default(t('error_default_title')) }}
             </h1>
             
             <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 32px; line-height: 1.6;">
-                {{ message | default("We couldn't process your request. Please try again or return to the homepage.") }}
+                {{ message | default(t('error_default_message')) }}
             </p>
             
             <!-- Technical Details (Only shown if provided) -->
             {% if details %}
             <div style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 16px; border-radius: 6px; margin-bottom: 32px; text-align: left;">
-                <strong style="color: #991b1b;">Technical Details:</strong>
+                <strong style="color: #991b1b;">{{ t('error_technical_details') }}</strong>
                 <p style="color: #991b1b; font-family: monospace; font-size: 0.9rem; margin-top: 8px; word-break: break-all;">
                     {{ details }}
                 </p>
@@ -42,14 +42,14 @@
             
             <!-- Action Buttons -->
             <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                <a href="/" class="btn btn-primary">🏠 Return to Homepage</a>
-                <a href="/login" class="btn btn-outline">🔄 Try Again</a>
+                <a href="/" class="btn btn-primary">{{ t('error_return_homepage') }}</a>
+                <a href="/login" class="btn btn-outline">{{ t('error_try_again') }}</a>
             </div>
             
         </div>
         
         <p style="margin-top: 24px; color: var(--text-muted); font-size: 0.9rem;">
-            If this error persists, please <a href="mailto:support@your-domain.com" style="color: var(--primary);">contact our support team</a>.
+            {{ t('error_persist_message') }} <a href="mailto:support@your-domain.com" style="color: var(--primary);">{{ t('error_contact_support') }}</a>.
         </p>
     </div>
 </div>

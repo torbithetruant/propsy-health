@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Propsy Health - Your Data, Your Control{% endblock %}
+{% block title %}{{ t('propsy_health') }} - {{ t('your_data_your_control') }}{% endblock %}
 
 {% block content %}
 
 <!-- 1. HERO SECTION -->
 <section class="hero-section">
     <div class="hero-content">
-        <h1 class="hero-title">Understand Your Health.<br>Own Your Data.</h1>
+        <h1 class="hero-title">{{ t('hero_title_1') }}<br>{{ t('hero_title_2') }}</h1>
         <p class="hero-subtitle">
-            Securely synchronize your fitness, sleep, and heart rate metrics from Google Health. 
-            Participate in our research study while maintaining complete control over your personal information.
+            {{ t('hero_subtitle') }}
         </p>
         <a href="/login" class="gsi-material-button" style="height: 50px; font-size: 16px; padding: 0 24px;">
             <div class="gsi-material-button-state"></div>
@@ -24,11 +23,11 @@
                         <path fill="none" d="M0 0h48v48H0z"></path>
                     </svg>
                 </div>
-                <span class="gsi-material-button-contents">Connect with Google Health</span>
+                <span class="gsi-material-button-contents">{{ t('connect_with_google_health') }}</span>
             </div>
         </a>
         <p style="margin-top: 16px; font-size: 0.85rem; opacity: 0.8;">
-            🔒 AES-256 Encryption · GDPR Compliant · Read-Only Access
+            🔒 {{ t('aes_256_encryption') }} · {{ t('gdpr_compliant') }} · {{ t('read_only_access') }}
         </p>
     </div>
 </section>
@@ -37,25 +36,25 @@
 <section class="section">
     <div class="container">
         <div class="section-header">
-            <h2 class="section-title">A Complete View of Your Well-being</h2>
-            <p class="section-desc">We transform raw Google Health data into clear, actionable insights.</p>
+            <h2 class="section-title">{{ t('complete_view_wellbeing') }}</h2>
+            <p class="section-desc">{{ t('transform_raw_data') }}</p>
         </div>
         
         <div class="grid-3">
             <div class="card">
-                <div class="card-icon"></div>
-                <h3>Daily Activity</h3>
-                <p>Track your step counts, calories burned, and active wear time. Build a complete picture of your daily movement and energy expenditure.</p>
+                <div class="card-icon"><i class="fa-solid fa-person-running"></i></div>
+                <h3>{{ t('daily_activity') }}</h3>
+                <p>{{ t('daily_activity_desc') }}</p>
             </div>
             <div class="card">
-                <div class="card-icon">😴</div>
-                <h3>Sleep Analysis</h3>
-                <p>Break down your night into Deep, Light, and REM stages. Monitor your sleep efficiency and identify patterns affecting your rest.</p>
+                <div class="card-icon"><i class="fa-solid fa-bed"></i></div>
+                <h3>{{ t('sleep_analysis') }}</h3>
+                <p>{{ t('sleep_analysis_desc') }}</p>
             </div>
             <div class="card">
-                <div class="card-icon">❤️</div>
-                <h3>Heart Rate Trends</h3>
-                <p>View your average, maximum, and resting heart rate. See detailed readings throughout the day to understand your cardiovascular health.</p>
+                <div class="card-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                <h3>{{ t('heart_rate_trends') }}</h3>
+                <p>{{ t('heart_rate_trends_desc') }}</p>
             </div>
         </div>
     </div>
@@ -66,34 +65,33 @@
     <div class="container">
         <div class="grid-2">
             <div>
-                <h2 class="section-title" style="text-align: left;">Participate in Health Research</h2>
+                <h2 class="section-title" style="text-align: left;">{{ t('participate_health_research') }}</h2>
                 <p class="section-desc" style="text-align: left; margin-bottom: 24px;">
-                    By connecting your account, you contribute to a broader understanding of daily health metrics. 
-                    Our study focuses on how activity, sleep, and heart rate correlate over time.
+                    {{ t('research_study_desc') }}
                 </p>
                 <ul style="list-style: none; padding: 0;">
                     <li style="margin-bottom: 12px; display: flex; gap: 12px; align-items: flex-start;">
-                        <span style="color: var(--primary); font-weight: bold;">✓</span>
-                        <span><strong>Voluntary Participation:</strong> You can withdraw from the study at any time without penalty.</span>
+                        <span style="color: var(--primary); font-weight: bold;"><i class="fa-solid fa-check"></i></span>
+                        <span><strong>{{ t('voluntary_participation') }}:</strong> {{ t('voluntary_participation_desc') }}</span>
                     </li>
                     <li style="margin-bottom: 12px; display: flex; gap: 12px; align-items: flex-start;">
-                        <span style="color: var(--primary); font-weight: bold;">✓</span>
-                        <span><strong>Complete Anonymity:</strong> Your data is encrypted and never shared with third parties.</span>
+                        <span style="color: var(--primary); font-weight: bold;"><i class="fa-solid fa-check"></i></span>
+                        <span><strong>{{ t('complete_anonymity') }}:</strong> {{ t('complete_anonymity_desc') }}</span>
                     </li>
                     <li style="margin-bottom: 12px; display: flex; gap: 12px; align-items: flex-start;">
-                        <span style="color: var(--primary); font-weight: bold;">✓</span>
-                        <span><strong>Right to Erasure:</strong> Request the permanent deletion of your data at any moment.</span>
+                        <span style="color: var(--primary); font-weight: bold;"><i class="fa-solid fa-check"></i></span>
+                        <span><strong>{{ t('right_to_erasure') }}:</strong> {{ t('right_to_erasure_desc') }}</span>
                     </li>
                 </ul>
             </div>
             <div class="card" style="background: #f8fafc; border: none; box-shadow: none;">
-                <h3 style="margin-bottom: 16px;">📋 Informed Consent</h3>
-                <p style="margin-bottom: 16px;">Before accessing your dashboard, you will review our Informed Consent document. This ensures you fully understand:</p>
+                <h3 style="margin-bottom: 16px;"><i class="fa-solid fa-clipboard-list"></i> {{ t('informed_consent') }}</h3>
+                <p style="margin-bottom: 16px;">{{ t('informed_consent_desc') }}</p>
                 <ul style="padding-left: 20px; color: var(--text-muted);">
-                    <li>The nature and duration of the research.</li>
-                    <li>The risks and benefits of participation.</li>
-                    <li>Our strict privacy and security measures.</li>
-                    <li>How to contact our research team.</li>
+                    <li>{{ t('consent_nature_duration') }}</li>
+                    <li>{{ t('consent_risks_benefits') }}</li>
+                    <li>{{ t('consent_privacy_security') }}</li>
+                    <li>{{ t('consent_contact_team') }}</li>
                 </ul>
             </div>
         </div>
@@ -104,16 +102,16 @@
 <section class="section">
     <div class="container text-center">
         <div class="card" style="max-width: 800px; margin: 0 auto; background: var(--gradient); color: white; border: none;">
-            <h2 style="color: white; margin-bottom: 16px;">Questions? We're here to help.</h2>
+            <h2 style="color: white; margin-bottom: 16px;">{{ t('questions_here_to_help') }}</h2>
             <p style="color: white; opacity: 0.9; margin-bottom: 24px; font-size: 1.1rem;">
-                Whether you have questions about the research study, your data privacy, or technical issues, our team is ready to assist you.
+                {{ t('questions_desc') }}
             </p>
             <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
                 <a href="/contact" class="btn" style="background: white; color: var(--primary);">
-                    ✉️ Contact Research Team
+                    <i class="fa-solid fa-envelope"></i> {{ t('contact_research_team') }}
                 </a>
                 <a href="/privacy" class="btn btn-outline" style="border-color: rgba(255,255,255,0.3); color: white;">
-                    📄 Read Privacy Policy
+                    <i class="fa-solid fa-file-lines"></i> {{ t('read_privacy_policy') }}
                 </a>
             </div>
         </div>

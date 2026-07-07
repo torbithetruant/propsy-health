@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}My Health Data - Propsy Health{% endblock %}
+{% block title %}{{ t('my_health_data') }} - {{ t('propsy_health') }}{% endblock %}
 
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -38,32 +38,66 @@
 {% block content %}
 <div class="container" style="padding: 40px 24px;">
     <div style="margin-bottom: 32px;">
-        <h1 style="font-size: 2rem; font-weight: 700; color: var(--text-main);">My Health Data</h1>
-        <p style="color: var(--text-muted);">View your daily health data from Google Health</p>
+        <h1 style="font-size: 2rem; font-weight: 700; color: var(--text-main);">{{ t('my_health_data') }}</h1>
+        <p style="color: var(--text-muted);">{{ t('view_daily_health_data') }}</p>
     </div>
 
     <!-- Date Picker -->
     <div class="card" style="margin-bottom: 32px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-        <label for="date-picker" style="font-weight: 600; font-size: 1.1rem;">📅 Select a date:</label>
+        <label for="date-picker" style="font-weight: 600; font-size: 1.1rem;">
+            <i class="fa-solid fa-calendar-days" style="margin-right: 8px;"></i> {{ t('select_a_date') }}
+        </label>
         <input type="date" id="date-picker" style="width: auto; flex: 1; min-width: 200px;" />
-        <button class="btn btn-primary" id="fetch-btn" onclick="fetchHealthData()">Fetch Data</button>
+        <button class="btn btn-primary" id="fetch-btn" onclick="fetchHealthData()">{{ t('fetch_data') }}</button>
         <span id="source-indicator"></span>
     </div>
 
     <!-- Daily Content Area -->
     <div id="content-area">
         <div class="card text-center" style="padding: 60px 20px; color: var(--text-muted);">
-            <p style="font-size: 3rem; margin-bottom: 16px;">📊</p>
-            <p>Select a date and click "Fetch Data" to view your health metrics.</p>
+            <p style="font-size: 3rem; margin-bottom: 16px;"><i class="fa-solid fa-chart-column"></i></p>
+            <p>{{ t('select_date_fetch_data') }}</p>
         </div>
     </div>
 
     <div style="margin-top: 32px;">
-        <a href="/dashboard" class="btn btn-outline">← Back to Dashboard</a>
+        <a href="/dashboard" class="btn btn-outline">
+            <i class="fa-solid fa-arrow-left" style="margin-right: 8px;"></i> {{ t('back_to_dashboard') }}
+        </a>
     </div>
 </div>
 
 <script>
+    // ==========================================
+    // INJECT TRANSLATIONS FOR JAVASCRIPT
+    // ==========================================
+    const t_js = {
+        please_select_date: "{{ t('please_select_date') }}",
+        fetching_health_data_for: "{{ t('fetching_health_data_for') }}",
+        error: "{{ t('error') }}",
+        from_cache: "{{ t('from_cache') }}",
+        from_google_api: "{{ t('from_google_api') }}",
+        no_health_data_available_for: "{{ t('no_health_data_available_for') }}",
+        wear_time: "{{ t('wear_time') }}",
+        percent_of_the_day: "{{ t('percent_of_the_day') }}",
+        sleep_cycle: "{{ t('sleep_cycle') }}",
+        activity: "{{ t('activity') }}",
+        steps: "{{ t('steps') }}",
+        calories: "{{ t('calories') }}",
+        heart_rate: "{{ t('heart_rate') }}",
+        average_hr: "{{ t('average_hr') }}",
+        max_hr: "{{ t('max_hr') }}",
+        resting_hr: "{{ t('resting_hr') }}",
+        sleep_summary: "{{ t('sleep_summary') }}",
+        duration: "{{ t('duration') }}",
+        efficiency: "{{ t('efficiency') }}",
+        deep_sleep: "{{ t('deep_sleep') }}",
+        light_sleep: "{{ t('light_sleep') }}",
+        rem_sleep: "{{ t('rem_sleep') }}",
+        no_data: "{{ t('no_data') }}",
+        no_sleep_data_available: "{{ t('no_sleep_data_available') }}"
+    };
+
     // Initialize date picker with today's date
     const datePicker = document.getElementById('date-picker');
     const today = new Date();
@@ -74,7 +108,7 @@
 
     async function fetchHealthData() {
         const date = datePicker.value;
-        if (!date) return alert('Please select a date');
+        if (!date) return alert(t_js.please_select_date);
         
         const contentArea = document.getElementById('content-area');
         const fetchBtn = document.getElementById('fetch-btn');
@@ -82,7 +116,7 @@
         
         fetchBtn.disabled = true;
         sourceIndicator.innerHTML = '';
-        contentArea.innerHTML = `<div class="card text-center" style="padding: 40px;"><p>Fetching health data for <strong>${date}</strong>...</p></div>`;
+        contentArea.innerHTML = `<div class="card text-center" style="padding: 40px;"><p>${t_js.fetching_health_data_for} <strong>${date}</strong>...</p></div>`;
         
         try {
             const response = await fetch(`/api/health-data/${date}`);
@@ -90,7 +124,8 @@
             const result = await response.json();
             renderHealthData(result, date);
         } catch (error) {
-            contentArea.innerHTML = `<div class="card" style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 20px; border-radius: 8px;"><strong>❌ Error:</strong> ${error.message}</div>`;
+            // Replaced ❌ with FontAwesome icon
+            contentArea.innerHTML = `<div class="card" style="background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 20px; border-radius: 8px;"><strong><i class="fa-solid fa-circle-xmark" style="margin-right: 6px;"></i>${t_js.error}:</strong> ${error.message}</div>`;
         } finally {
             fetchBtn.disabled = false;
         }
@@ -102,14 +137,15 @@
         const data = result.data;
         const source = result.source;
         
-        const sourceLabel = source === 'database' ? '⚡ From Cache' : '🌐 From Google API';
+        const sourceLabel = source === 'database' ? t_js.from_cache : t_js.from_google_api;
         const badgeClass = source === 'database' ? 'badge-success' : 'badge-primary';
         sourceIndicator.innerHTML = `<span class="badge ${badgeClass}">${sourceLabel}</span>`;
         
         const hasData = data.steps > 0 || data.calories > 0 || data.sleep_duration > 0;
         
         if (!hasData) {
-            contentArea.innerHTML = `<div class="card text-center" style="padding: 40px; color: var(--text-muted);"><p style="font-size: 3rem;">😴</p><p>No health data available for <strong>${date}</strong>.</p></div>`;
+            // Replaced 😴 with FontAwesome icon
+            contentArea.innerHTML = `<div class="card text-center" style="padding: 40px; color: var(--text-muted);"><p style="font-size: 3rem;"><i class="fa-solid fa-bed"></i></p><p>${t_js.no_health_data_available_for} <strong>${date}</strong>.</p></div>`;
             return;
         }
 
@@ -120,17 +156,17 @@
             <div class="grid-2" style="margin-bottom: 24px;">
                 <!-- Wear Time Card -->
                 <div class="card">
-                    <h3>⌚ Wear Time</h3>
+                    <h3>${t_js.wear_time}</h3>
                     <p style="font-size: 2rem; font-weight: 700; margin: 16px 0;">${formatMinutes(data.wear_time)}</p>
                     <div class="wear-time-bar-container">
                         <div class="wear-time-bar" style="width: ${wearTimePercent}%"></div>
                     </div>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px;">${wearTimePercent.toFixed(1)}% of the day</p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px;">${wearTimePercent.toFixed(1)}${t_js.percent_of_the_day}</p>
                 </div>
 
                 <!-- Sleep Cycle Chart -->
                 <div class="card">
-                    <h3>🌙 Sleep Cycle</h3>
+                    <h3>${t_js.sleep_cycle}</h3>
                     <div class="chart-container">
                         <canvas id="sleepChart"></canvas>
                     </div>
@@ -139,20 +175,20 @@
 
             <div class="grid-3" style="margin-bottom: 24px;">
                 <div class="card">
-                    <h3>🏃 Activity</h3>
-                    ${renderMetric('Steps', data.steps, 'steps')}
-                    ${renderMetric('Calories', data.calories, 'kcal')}
+                    <h3>${t_js.activity}</h3>
+                    ${renderMetric(t_js.steps, data.steps, 'steps')}
+                    ${renderMetric(t_js.calories, data.calories, 'kcal')}
                 </div>
                 <div class="card">
-                    <h3>❤️ Heart Rate</h3>
-                    ${renderMetric('Average HR', data.avg_hr, 'bpm')}
-                    ${renderMetric('Max HR', data.max_hr, 'bpm')}
-                    ${renderMetric('Resting HR', data.resting_hr, 'bpm')}
+                    <h3>${t_js.heart_rate}</h3>
+                    ${renderMetric(t_js.average_hr, data.avg_hr, 'bpm')}
+                    ${renderMetric(t_js.max_hr, data.max_hr, 'bpm')}
+                    ${renderMetric(t_js.resting_hr, data.resting_hr, 'bpm')}
                 </div>
                 <div class="card">
-                    <h3>🌙 Sleep Summary</h3>
-                    ${renderMetric('Duration', formatMinutes(data.sleep_duration), '')}
-                    ${renderMetric('Efficiency', data.sleep_efficiency !== null ? data.sleep_efficiency + '%' : null, '')}
+                    <h3>${t_js.sleep_summary}</h3>
+                    ${renderMetric(t_js.duration, formatMinutes(data.sleep_duration), '')}
+                    ${renderMetric(t_js.efficiency, data.sleep_efficiency !== null ? data.sleep_efficiency + '%' : null, '')}
                 </div>
             </div>
         `;
@@ -168,9 +204,9 @@
                 type: 'doughnut',
                 data: {
                     labels: [
-                        `Deep Sleep (${deepHours})`,
-                        `Light Sleep (${lightHours})`,
-                        `REM Sleep (${remHours})`
+                        `${t_js.deep_sleep} (${deepHours})`,
+                        `${t_js.light_sleep} (${lightHours})`,
+                        `${t_js.rem_sleep} (${remHours})`
                     ],
                     datasets: [{
                         data: [data.deep_sleep || 0, data.light_sleep || 0, data.rem_sleep || 0],
@@ -206,13 +242,13 @@
             });
         }
         else {
-            document.getElementById('sleepChart').parentElement.innerHTML = `<p style="color: var(--text-muted); margin-top: 16px;">No sleep data available for this date.</p>`;
+            document.getElementById('sleepChart').parentElement.innerHTML = `<p style="color: var(--text-muted); margin-top: 16px;">${t_js.no_sleep_data_available}</p>`;
         }
     }
     
     function renderMetric(label, value, unit) {
         const displayValue = value === null || value === undefined 
-            ? '<span style="color: var(--text-muted); font-style: italic;">No data</span>'
+            ? `<span style="color: var(--text-muted); font-style: italic;">${t_js.no_data}</span>`
             : `<span style="font-size: 1.25rem; font-weight: 700; color: var(--text-main);">${value}${unit ? ' <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-muted);">' + unit + '</span>' : ''}</span>`;
         return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border);"><span style="color: var(--text-muted); font-size: 0.9rem;">${label}</span>${displayValue}</div>`;
     }
