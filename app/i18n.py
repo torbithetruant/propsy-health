@@ -97,6 +97,8 @@ translations = {
         "read_full_policy": "Read Full Policy",
         "privacy_banner_message": "Propsy Health <strong>accesses</strong> your Google Health data solely to power your dashboard. We <strong>use</strong> it only for visualization, <strong>store</strong> it using AES-256 encryption, and we do not <strong>share</strong> it with third parties.",
         
+        "consent_board": "Consent",
+
         # Consent Page - Header & Intro
         "informed_consent": "Informed Consent",
         "consent_study_name": "Propsy Health Data Synchronization Study",
@@ -373,6 +375,8 @@ translations = {
         "privacy_notice": "Avis de Confidentialité :",
         "read_full_policy": "Lire la Politique Complète",
         "privacy_banner_message": "Propsy Health <strong>accède</strong> à vos données Google Health uniquement pour alimenter votre tableau de bord. Nous les <strong>utilisons</strong> seulement pour la visualisation, les <strong>stockons</strong> avec un chiffrement AES-256, et nous ne les <strong>partageons</strong> pas avec des tiers.",
+        
+        "consent_board": "Consentement",
 
         # Consent Page - Header & Intro
         "informed_consent": "Consentement Éclairé",

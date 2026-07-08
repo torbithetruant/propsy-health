@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, Request, HTTPException, status
 from fastapi.responses import RedirectResponse, HTMLResponse
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from app.core.session import SessionUser, clear_user_session, get_current_user_with_consent
+from app.core.session import SessionUser, clear_user_session, get_current_user_with_consent, get_current_user
 from app.core.templates import templates
 from app.database import get_database
 from app.auth.token_storage import TokenStorageService
@@ -55,7 +55,7 @@ async def view_my_data(
 @router.post("/disconnect")
 async def disconnect_account(
     request: Request,
-    current_user: SessionUser = Depends(get_current_user_with_consent),
+    current_user: SessionUser = Depends(get_current_user),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """

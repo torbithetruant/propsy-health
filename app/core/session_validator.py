@@ -13,22 +13,25 @@ from app.database import get_database
 
 logger = logging.getLogger(__name__)
 
-
 class SessionValidationMiddleware(BaseHTTPMiddleware):
+    # Paths that don't require session validation
     PUBLIC_PATHS = {
-        "/", "/login", "/oauth/callback", "/privacy", "/health",
-        "/admin/login", "/admin/logout"
+        "/", "/login", "/oauth/callback", "/consent", "/privacy", "/health", "/contact",
+        "/admin/login", "/admin/logout", "/docs", "/redoc", "/openapi.json"
     }
     
     async def dispatch(self, request: Request, call_next):
+        # Skip validation for public paths and static files
         if request.url.path in self.PUBLIC_PATHS or request.url.path.startswith("/static"):
             return await call_next(request)
         
+        # Skip if no session middleware
         if "session" not in request.scope:
             return await call_next(request)
         
         legacy_id = request.session.get("legacy_id")
         
+        # If user is logged in, verify their state in the database
         if legacy_id:
             try:
                 db = get_database()
@@ -41,14 +44,42 @@ class SessionValidationMiddleware(BaseHTTPMiddleware):
                 consent_col = db["user_consents"]
                 consent_record = await consent_col.find_one({"legacy_id": legacy_id})
                 
-                # Decision logic:
-                # - Has token + has consent → Valid user, let through
-                # - Has token + NO consent → User in onboarding flow (just did OAuth), let through
-                # - NO token + NO consent → Stale/deleted session, invalidate
-                # - NO token + has consent → Edge case (token revoked but consent exists), let through
+                # Check 3: Is the consent ACTIVE?
+                has_active_consent = False
+                if consent_record:
+                    has_active_consent = consent_record.get("status") == "active"
                 
+                # ==========================================
+                # DECISION LOGIC
+                # ==========================================
+                should_invalidate = False
+                reason = ""
+                
+                # Case 1: NO token + NO consent → User was deleted by admin or never existed
                 if not has_token and not consent_record:
-                    logger.warning(f"🚨 Stale session for {legacy_id}: no token, no consent. Clearing.")
+                    should_invalidate = True
+                    reason = "no token, no consent (deleted user)"
+                
+                # Case 2: Has token + INACTIVE consent → User withdrew or consent was revoked
+                elif has_token and consent_record and not has_active_consent:
+                    should_invalidate = True
+                    reason = "consent is inactive (user withdrew)"
+                
+                # Case 3: NO token + ACTIVE consent → Edge case (token revoked/deleted but consent exists)
+                elif not has_token and has_active_consent:
+                    should_invalidate = True
+                    reason = "no token but active consent (orphaned consent)"
+                
+                # Case 4: Has token + NO consent → User in onboarding flow (just did OAuth)
+                # -> Let them through so they can reach /consent
+                
+                # Case 5: Has token + ACTIVE consent → Valid user
+                # -> Let them through to dashboard
+                
+                # ==========================================
+                
+                if should_invalidate:
+                    logger.warning(f"🚨 Invalid session for {legacy_id}: {reason}. Clearing session.")
                     request.session.clear()
                     
                     if not request.url.path.startswith("/admin"):
