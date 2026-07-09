@@ -279,6 +279,29 @@ translations = {
         "reason_for_withdrawal_optional": "The reason for withdrawal (optional)",
         "withdraw_once_received": "Once we receive your email, our team will manually process your withdrawal and permanently delete your data from our servers.",
         "send_withdrawal_email": "Send Withdrawal Email",
+
+        # Dashboard - Compliance Cards
+        "active_enrollment": "Active Enrollment",
+        "active_enrollment_desc": "You are actively contributing to the Propsy Health research study. Your Google Health data is being securely encrypted and stored for analysis.",
+        "status_label": "Status",
+        "syncing_encrypted": "Syncing & Encrypted",
+        "download_my_data": "Download My Data",
+        "download_my_data_desc": "Under GDPR and Google policies, you have the right to access your data. Click here to download a complete JSON export of all health records we have collected from your account.",
+        "export_json_data": "Export JSON Data",
+        "withdraw_compliance_desc": "You may withdraw at any time. This will permanently delete your data from our research servers and revoke our access to your Google account.",
+        "initiate_withdrawal": "Initiate Withdrawal",
+        "view_daily_charts": "View Daily Health Charts & Metrics",
+        "withdraw_modal_title": "Withdraw from Study?",
+        "withdraw_modal_desc": "This action will trigger the GDPR Right to Erasure. All your health records, OAuth tokens, and consent data will be permanently deleted from our database.",
+        "confirm_withdrawal": "Confirm Withdrawal",
+        "syncing": "Syncing...",
+
+        "starting_sync": "Starting Sync...",
+        "initializing": "Initializing...",
+        "syncing_progress": "Syncing...",
+        "sync_complete_preparing": "Sync Complete! Preparing download...",
+        "error_sync": "Error during sync. Please try again.",
+        "retry": "Retry",
     },
     "fr": {
         "propsy_health": "Propsy Health",
@@ -558,6 +581,29 @@ translations = {
         "reason_for_withdrawal_optional": "La raison du retrait (facultatif)",
         "withdraw_once_received": "Dès réception de votre email, notre équipe traitera manuellement votre retrait et supprimera définitivement vos données de nos serveurs.",
         "send_withdrawal_email": "Envoyer l'Email de Retrait",
+
+        # Dashboard - Compliance Cards
+        "active_enrollment": "Inscription Active",
+        "active_enrollment_desc": "Vous contribuez activement à l'étude de recherche Propsy Health. Vos données Google Health sont chiffrées en toute sécurité et stockées pour analyse.",
+        "status_label": "Statut",
+        "syncing_encrypted": "Synchronisation & Chiffré",
+        "download_my_data": "Télécharger Mes Données",
+        "download_my_data_desc": "Conformément au RGPD et aux politiques Google, vous avez le droit d'accéder à vos données. Cliquez ici pour télécharger un export JSON complet de tous les enregistrements de santé que nous avons collectés sur votre compte.",
+        "export_json_data": "Exporter les Données JSON",
+        "withdraw_compliance_desc": "Vous pouvez vous retirer à tout moment. Cela supprimera définitivement vos données de nos serveurs de recherche et révoquera notre accès à votre compte Google.",
+        "initiate_withdrawal": "Initier le Retrait",
+        "view_daily_charts": "Voir les Graphiques et Métriques de Santé Quotidiens",
+        "withdraw_modal_title": "Se retirer de l'étude ?",
+        "withdraw_modal_desc": "Cette action déclenchera le Droit à l'Effacement du RGPD. Tous vos enregistrements de santé, tokens OAuth et données de consentement seront définitivement supprimés de notre base de données.",
+        "confirm_withdrawal": "Confirmer le Retrait",
+        "syncing": "Synchronisation en cours...",
+
+        "starting_sync": "Démarrage de la synchronisation...",
+        "initializing": "Initialisation...",
+        "syncing_progress": "Synchronisation...",
+        "sync_complete_preparing": "Synchronisation terminée ! Préparation du téléchargement...",
+        "error_sync": "Erreur lors de la synchronisation. Veuillez réessayer.",
+        "retry": "Réessayer",
     }
 }
 

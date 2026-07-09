@@ -8,6 +8,7 @@
         <p style="color: var(--text-muted);">{{ t('dashboard_manage_desc') }}</p>
     </div>
 
+    <!-- Account Information Card -->
     <div class="card" style="margin-bottom: 24px;">
         <h3 style="margin-bottom: 16px;">{{ t('account_information') }}</h3>
         <div style="display: flex; gap: 32px; flex-wrap: wrap;">
@@ -22,62 +23,168 @@
         </div>
     </div>
 
-    <div class="grid-3">
-        <a href="/dashboard/data" class="card" style="text-decoration: none; color: inherit; display: block;">
-            <div class="card-icon"><i class="fa-solid fa-chart-column"></i></div>
-            <h3>{{ t('see_my_data') }}</h3>
-            <p>{{ t('view_health_data') }}</p>
-        </a>
+    <!-- ========================================== -->
+    <!-- THE 3 REQUIRED COMPLIANCE CARDS            -->
+    <!-- ========================================== -->
+    <div class="grid-3" style="margin-bottom: 32px;">
         
-        <div class="card" style="cursor: pointer;" onclick="showModal('withdraw-modal')">
-            <div class="card-icon" style="background: #fef2f2; color: #dc2626;"><i class="fa-solid fa-envelope-open-text"></i></div>
-            <h3 style="color: #dc2626;">{{ t('withdraw_from_study') }}</h3>
-            <p>{{ t('withdraw_desc') }}</p>
+        <!-- Card 1: Study Status -->
+        <div class="card" style="border-top: 4px solid #10b981;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">
+                <!-- Pulsing Green Dot -->
+                <div style="width: 12px; height: 12px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);"></div>
+                <h3 style="margin: 0; color: var(--text-main);">{{ t('active_enrollment') }}</h3>
+            </div>
+            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 16px;">
+                {{ t('active_enrollment_desc') }}
+            </p>
+            <div style="background: #f0fdf4; padding: 10px; border-radius: 6px; font-size: 0.85rem; color: #065f46; border: 1px solid #bbf7d0;">
+                <strong><i class="fa-solid fa-shield-halved" style="margin-right: 6px;"></i>{{ t('status_label') }}:</strong> {{ t('syncing_encrypted') }}
+            </div>
         </div>
-        
-        <div class="card" style="cursor: pointer;" onclick="showModal('disconnect-modal')">
-            <div class="card-icon" style="background: #fff7ed; color: #ea580c;"><i class="fa-solid fa-plug"></i></div>
-            <h3 style="color: #ea580c;">{{ t('disconnect') }}</h3>
-            <p>{{ t('disconnect_desc') }}</p>
+
+        <!-- Card 2: Data Transparency (Crucial for Google) -->
+        <div class="card" style="border-top: 4px solid var(--primary);">
+            <h3 style="margin-bottom: 16px; color: var(--text-main);">
+                <i class="fa-solid fa-download" style="color: var(--primary); margin-right: 8px;"></i> {{ t('download_my_data') }}
+            </h3>
+            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
+                {{ t('download_my_data_desc') }}
+            </p>
+            
+            <!-- Download Button -->
+            <button id="download-btn" class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="startSyncAndDownload()">
+                <i class="fa-solid fa-file-arrow-down" style="margin-right: 8px;"></i> {{ t('export_json_data') }}
+            </button>
+
+            <!-- Progress UI (Hidden by default) -->
+            <div id="sync-progress-ui" style="display: none; margin-top: 20px; text-align: center;">
+                <div style="background: #e2e8f0; border-radius: 8px; height: 12px; width: 100%; overflow: hidden; margin-bottom: 8px;">
+                    <div id="progress-bar-fill" style="background: var(--primary); height: 100%; width: 0%; transition: width 0.3s ease;"></div>
+                </div>
+                <p id="progress-text" style="font-size: 0.9rem; color: var(--text-main); font-weight: 600;">
+                    {{ t('syncing') }}
+                </p>
+            </div>
         </div>
+
+        <!-- Card 3: Withdrawal & Deletion -->
+        <div class="card" style="border-top: 4px solid #dc2626; cursor: pointer;" onclick="showModal('withdraw-modal')">
+            <h3 style="margin-bottom: 16px; color: #dc2626;">
+                <i class="fa-solid fa-trash-can" style="margin-right: 8px;"></i> {{ t('withdraw_from_study') }}
+            </h3>
+            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
+                {{ t('withdraw_compliance_desc') }}
+            </p>
+            <button class="btn btn-outline" style="width: 100%; justify-content: center; border-color: #fecaca; color: #dc2626;">
+                {{ t('initiate_withdrawal') }}
+            </button>
+        </div>
+
     </div>
+
+    <!-- Subtle link to the charts page -->
+    <!-- <div style="text-align: center; margin-bottom: 32px; padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px dashed var(--border);">
+        <a href="/dashboard/data" style="color: var(--primary); font-weight: 600; text-decoration: none; font-size: 0.95rem;">
+            <i class="fa-solid fa-chart-column" style="margin-right: 8px;"></i> {{ t('view_daily_charts') }}
+        </a>
+    </div> -->
+
 </div>
 
 <!-- Withdraw Modal -->
 <div id="withdraw-modal" class="modal">
     <div class="modal-content">
-        <h2 style="margin-bottom: 16px;">{{ t('withdraw_confirm_title') }}</h2>
-        <p style="margin-bottom: 16px; color: var(--text-muted);">{{ t('withdraw_confirm_desc') }}</p>
+        <h2 style="margin-bottom: 16px; color: #dc2626;">
+            <i class="fa-solid fa-triangle-exclamation" style="margin-right: 8px;"></i> {{ t('withdraw_modal_title') }}
+        </h2>
+        <p style="margin-bottom: 16px; color: var(--text-muted); line-height: 1.6;">
+            {{ t('withdraw_modal_desc') }}
+        </p>
         <div class="warning-box" style="background: #fef2f2; border-left: 4px solid #dc2626; padding: 12px; border-radius: 6px; margin-bottom: 24px;">
             <strong style="color: #dc2626;">{{ t('action_cannot_be_undone') }}</strong>
         </div>
         <div class="btn-group" style="display: flex; gap: 12px; justify-content: flex-end;">
             <button class="btn btn-outline" onclick="hideModal('withdraw-modal')">{{ t('cancel') }}</button>
             <form action="/dashboard/withdraw" method="POST" style="display:inline;">
-                <button type="submit" class="btn" style="background: #dc2626; color: white;">{{ t('withdraw_from_study') }}</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Disconnect Modal -->
-<div id="disconnect-modal" class="modal">
-    <div class="modal-content">
-        <h2 style="margin-bottom: 16px;">{{ t('disconnect_confirm_title') }}</h2>
-        <p style="margin-bottom: 16px; color: var(--text-muted);">{{ t('disconnect_confirm_desc') }}</p>
-        <div class="warning-box" style="background: #fff7ed; border-left: 4px solid #ea580c; padding: 12px; border-radius: 6px; margin-bottom: 24px;">
-            <strong style="color: #ea580c;">{{ t('action_cannot_be_undone') }}</strong>
-        </div>
-        <div class="btn-group" style="display: flex; gap: 12px; justify-content: flex-end;">
-            <button class="btn btn-outline" onclick="hideModal('disconnect-modal')">{{ t('cancel') }}</button>
-            <form action="/dashboard/disconnect" method="POST" style="display:inline;">
-                <button type="submit" class="btn" style="background: #ea580c; color: white;">{{ t('disconnect') }}</button>
+                <button type="submit" class="btn" style="background: #dc2626; color: white;">{{ t('confirm_withdrawal') }}</button>
             </form>
         </div>
     </div>
 </div>
 
 <script>
+    // Show loading state when downloading data
+    let syncInterval;
+
+    const t_js = {
+        starting_sync: "{{ t('starting_sync') }}",
+        initializing: "{{ t('initializing') }}",
+        syncing_progress: "{{ t('syncing_progress') }}",
+        sync_complete_preparing: "{{ t('sync_complete_preparing') }}",
+        error_sync: "{{ t('error_sync') }}",
+        retry: "{{ t('retry') }}",
+        export_json_data: "{{ t('export_json_data') }}"
+    };
+
+    async function startSyncAndDownload() {
+        const btn = document.getElementById('download-btn');
+        const progressUI = document.getElementById('sync-progress-ui');
+        const progressBar = document.getElementById('progress-bar-fill');
+        const progressText = document.getElementById('progress-text');
+
+        // 1. UI Setup
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> ${t_js.starting_sync}`;
+        progressUI.style.display = 'block';
+        progressBar.style.width = '0%';
+        progressText.innerText = t_js.initializing;
+
+        try {
+            // 2. Trigger the sync process
+            const syncResponse = await fetch('/dashboard/sync-data', { method: 'POST' });
+            if (!syncResponse.ok) throw new Error('Failed to start sync');
+
+            // 3. Start polling for progress
+            syncInterval = setInterval(async () => {
+                const progressRes = await fetch('/dashboard/sync-progress');
+                const data = await progressRes.json();
+
+                // Update UI
+                const percent = data.total > 0 ? (data.current / data.total) * 100 : 100;
+                progressBar.style.width = `${percent}%`;
+                progressText.innerText = `${t_js.syncing_progress} ${data.current}/${data.total}`;
+
+                // 4. Check if done
+                if (data.done) {
+                    clearInterval(syncInterval);
+                    progressText.innerText = t_js.sync_complete_preparing;
+                    progressBar.style.width = '100%';
+                    progressBar.style.background = '#10b981'; // Green for success
+
+                    // 5. Trigger actual file download
+                    setTimeout(() => {
+                        window.location.href = '/dashboard/download-data';
+                        
+                        // Reset button after a delay
+                        setTimeout(() => {
+                            btn.disabled = false;
+                            btn.innerHTML = `<i class="fa-solid fa-file-arrow-down" style="margin-right: 8px;"></i> ${t_js.export_json_data}`;
+                            progressUI.style.display = 'none';
+                            progressBar.style.background = 'var(--primary)';
+                        }, 3000);
+                    }, 1000);
+                }
+            }, 1000); // Poll every 1 second
+
+        } catch (error) {
+            console.error(error);
+            progressText.innerText = t_js.error_sync;
+            progressText.style.color = '#dc2626';
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fa-solid fa-rotate-right" style="margin-right: 8px;"></i> ${t_js.retry}`;
+        }
+    }
     function showModal(id) { 
         document.getElementById(id).classList.add('active'); 
     }
