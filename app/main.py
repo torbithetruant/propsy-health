@@ -93,10 +93,9 @@ def create_app() -> FastAPI:
     # Register routers
     app.include_router(auth.public_router)  # Public OAuth endpoints
     app.include_router(auth.router)         # API endpoints
-    app.include_router(dashboard.router)
-    app.include_router(health_data.router)
-    app.include_router(consent.router)
-    app.include_router(admin.router)
+    app.include_router(dashboard.router)    # Dashboard endpoints
+    app.include_router(consent.router)      # User consent endpoints
+    app.include_router(admin.router)        # Admin endpoints
     
     # Root health check
     @app.get("/health")

@@ -17,20 +17,15 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["consent"])
 
 
+
 @router.get("/consent", response_class=HTMLResponse)
 async def show_consent_form(
     request: Request,
     current_user: SessionUser = Depends(get_current_user),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
-    """
-    Display the Informed Consent form.
-    
-    If user already has active consent, redirect to dashboard.
-    """
     storage = ConsentStorageService(db)
     
-    # If already consented, skip to dashboard
     if await storage.has_active_consent(current_user.legacy_id):
         return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
     
@@ -38,6 +33,7 @@ async def show_consent_form(
         request,
         "consent.html",
         {
+            "current_user": current_user,
             "legacy_id": current_user.legacy_id,
             "health_id": current_user.health_id,
             "consent_version": ConsentStorageService.CURRENT_CONSENT_VERSION,
@@ -53,18 +49,26 @@ async def submit_consent(
 ):
     """
     Process the signed consent form.
-    
-    Records consent in MongoDB with boolean flags and redirects to dashboard.
     """
-    form = await request.form()
+
+    if hasattr(request.state, "form_data"):
+        form = request.state.form_data
+    else:
+        form = await request.form()
     
-    # Extract boolean consent flags
-    consent_read = form.get("consent_read") == "on"
-    consent_voluntary = form.get("consent_voluntary") == "on"
-    consent_data = form.get("consent_data") == "on"
+    # DEBUG: Log exactly what keys are arriving from the browser
+    logger.info(f" Consent form keys received: {list(form.keys())}")
+    
+    # FIX: Check for the presence of the key, not its string value.
+    # In HTML forms, unchecked checkboxes are completely omitted from the payload.
+    # Therefore, if the key exists in the form, the box was checked.
+    consent_read = "consent_read" in form
+    consent_voluntary = "consent_voluntary" in form
+    consent_data = "consent_data" in form
     
     # Validate all required checkboxes were checked
     if not all([consent_read, consent_voluntary, consent_data]):
+        logger.warning(f" Consent validation failed. Read: {consent_read}, Voluntary: {consent_voluntary}, Data: {consent_data}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="All consent checkboxes must be checked"
@@ -72,7 +76,6 @@ async def submit_consent(
     
     # Record consent with boolean flags
     storage = ConsentStorageService(db)
-
     consent_id = await storage.record_consent(
         legacy_id=current_user.legacy_id,
         health_id=current_user.health_id,
@@ -88,12 +91,13 @@ async def submit_consent(
     request.session["consent_id"] = consent_id
     request.session["consent_version"] = ConsentStorageService.CURRENT_CONSENT_VERSION
     
-    logger.info(f"Consent submitted by {current_user.legacy_id} (consent_id: {consent_id})")
+    logger.info(f" Consent submitted by {current_user.legacy_id} (consent_id: {consent_id})")
     
     return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
 
 
-@router.post("/consent/withdraw")
+# @router.post("/consent/withdraw")
+# WILL BE AVAILABLE FOR ADMIN
 async def withdraw_consent(
     request: Request,
     current_user: SessionUser = Depends(get_current_user),
@@ -104,7 +108,11 @@ async def withdraw_consent(
     
     This is the GDPR Article 17 "Right to Erasure" implementation.
     """
-    form = await request.form()
+    if hasattr(request.state, "form_data"):
+        form = request.state.form_data
+    else:
+        form = await request.form()
+        
     reason = form.get("reason", "User-initiated withdrawal")
     delete_data = form.get("delete_data") == "true"
     

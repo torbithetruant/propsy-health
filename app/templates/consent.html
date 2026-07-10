@@ -151,7 +151,7 @@
                 </p>
                 <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8; margin-top: 8px;">
                     <li>{{ t('consent_full_privacy_policy') }}: <a href="/privacy" style="color: var(--primary);">/privacy</a></li>
-                    <li>{{ t('consent_terms_of_service') }}: <a href="/privacy" style="color: var(--primary);">/privacy</a></li>
+                    <li>{{ t('consent_terms_of_service') }}: <a href="/terms" style="color: var(--primary);">/terms</a></li>
                     <li>{{ t('consent_irb_documentation') }}: <a href="mailto:research@your-domain.com" style="color: var(--primary);">research@your-domain.com</a></li>
                 </ul>
             </div>
@@ -160,6 +160,9 @@
         
         <!-- Signature Section -->
         <form method="POST" action="/consent" id="consent-form">
+
+            <input type="hidden" name="csrf_token" value="{{ request.session.csrf_token }}">
+
             <div class="card" style="background: #f8fafc; border: 2px dashed var(--primary); margin-bottom: 32px;">
                 <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
                     <i class="fa-solid fa-signature"></i> {{ t('consent_your_consent') }}
@@ -195,7 +198,7 @@
             <p style="margin-bottom: 16px;"><i class="fa-solid fa-shield-halved" style="margin-right: 6px;"></i> {{ t('consent_recorded_securely') }}</p>
             <p>
                 <a href="/privacy" style="color: var(--primary);">{{ t('privacy_policy') }}</a> · 
-                <a href="/privacy" style="color: var(--primary);">{{ t('terms_of_service') }}</a> · 
+                <a href="/terms" style="color: var(--primary);">{{ t('terms_of_service') }}</a> · 
                 <a href="mailto:research@your-domain.com" style="color: var(--primary);">{{ t('consent_contact_research') }}</a>
             </p>
         </div>

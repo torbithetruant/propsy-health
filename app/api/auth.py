@@ -63,6 +63,11 @@ async def contact_page(
     )
 
 
+@public_router.get("/terms", response_class=HTMLResponse)
+async def terms_page(request: Request, current_user = Depends(get_optional_user)):
+    return templates.TemplateResponse(request, "terms.html", {"current_user": current_user})
+
+
 @public_router.get("/login")
 async def start_oauth_flow(request: Request):
     """Initiate Google OAuth flow with PKCE support."""

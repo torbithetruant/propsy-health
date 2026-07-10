@@ -27,7 +27,7 @@ async def dashboard_home(
     request: Request,
     current_user: SessionUser = Depends(get_current_user_with_consent)
 ):
-    """Main dashboard page with menu."""
+    
     return templates.TemplateResponse(
         request,
         "dashboard.html",
@@ -152,22 +152,17 @@ async def disconnect_account(
     return RedirectResponse(url="/?disconnected=true", status_code=status.HTTP_303_SEE_OTHER)
 
 
-@router.post("/withdraw")
-async def withdraw_from_study(
+@router.get("/withdraw", response_class=HTMLResponse)
+async def show_withdraw_page(
     request: Request,
-    current_user: SessionUser = Depends(get_current_user_with_consent),
-    db: AsyncIOMotorDatabase = Depends(get_database)
+    current_user: SessionUser = Depends(get_current_user_with_consent)
 ):
-    """
-    Redirect to withdrawal confirmation page. If confirmed, deletes all data and revokes token.
-    This is the GDPR Article 17 "Right to Erasure" implementation.
-    """
-    
-    logger.info(f"Initiating withdrawal process for {current_user.legacy_id}")
+
     return templates.TemplateResponse(
         request,
         "withdraw.html",
         {
+            "current_user": current_user,
             "legacy_id": current_user.legacy_id,
             "health_id": current_user.health_id,
         }

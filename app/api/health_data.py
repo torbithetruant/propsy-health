@@ -1,4 +1,9 @@
-"""API routes for retrieving and caching Google Health data."""
+"""
+API routes for retrieving and caching Google Health data.
+
+NOT USE IN CURRENT VERSION: you need this for a dashboard that shows health data. The current version of the app does not have a dashboard, so this is not used.
+
+"""
 import logging
 import json
 from fastapi import APIRouter, Depends, HTTPException, Path

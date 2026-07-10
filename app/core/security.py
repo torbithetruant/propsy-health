@@ -193,215 +193,18 @@ _oauth_rate_limiter = SlidingWindowRateLimiter(max_requests=10, window_seconds=6
 _api_rate_limiter = SlidingWindowRateLimiter(max_requests=100, window_seconds=60)  # 100/min for API
 _general_rate_limiter = SlidingWindowRateLimiter(max_requests=200, window_seconds=60)  # 200/min general
 
-
-# ============================================================================
-# SECURITY MIDDLEWARE SETUP
-# ============================================================================
-
-def setup_security(app: FastAPI):
-    """
-    Configure security middleware. MUST be called before app starts.
-    
-    Sets up:
-    - Security headers (X-Content-Type-Options, X-Frame-Options, etc.)
-    - Rate limiting with sliding window algorithm
-    - CSRF token validation for state-changing requests
-    """
-    settings = get_settings()
-    
-    # === Security Headers Middleware ===
-    @app.middleware("http")
-    async def add_security_headers(request: Request, call_next):
-        """Add security headers to all responses."""
-        response = await call_next(request)
-        
-        # Standard security headers
-        response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["X-Frame-Options"] = "DENY"
-        response.headers["X-XSS-Protection"] = "1; mode=block"
-        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
-        
-        # HSTS (HTTPS enforcement) - only in production
-        if not settings.environment == "production":
-            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-        
-        # Prevent caching of sensitive endpoints
-        if request.url.path.startswith("/api/tokens"):
-            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
-            response.headers["Pragma"] = "no-cache"
-        
-        return response
-    
-    # === Rate Limiting Middleware ===
-    @app.middleware("http")
-    async def rate_limit_middleware(request: Request, call_next):
-        """Apply rate limiting based on endpoint type."""
-        # Skip rate limiting for static files and health checks
-        if request.url.path.startswith("/static") or request.url.path == "/health":
-            return await call_next(request)
-        
-        client_ip = request.client.host
-        
-        # Determine which rate limiter to use based on endpoint
-        if request.url.path in ("/login", "/oauth/callback"):
-            # Stricter limits for OAuth endpoints
-            limiter = _oauth_rate_limiter
-            limit_key = f"oauth:{client_ip}"
-        elif request.url.path.startswith("/api/"):
-            # API endpoints
-            limiter = _api_rate_limiter
-            limit_key = f"api:{client_ip}"
-        else:
-            # General pages
-            limiter = _general_rate_limiter
-            limit_key = f"general:{client_ip}"
-        
-        # Check rate limit
-        if not limiter.is_allowed(limit_key):
-            reset_time = limiter.get_reset_time(limit_key)
-            retry_after = int(reset_time - time.time()) if reset_time else limiter.window_seconds
-            
-            logger.warning(
-                f"Rate limit exceeded for {client_ip} on {request.url.path} "
-                f"(limit: {limiter.max_requests}/{limiter.window_seconds}s)"
-            )
-            
-            return JSONResponse(
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-                content={
-                    "detail": "Too many requests. Please try again later.",
-                    "retry_after": retry_after,
-                    "limit": limiter.max_requests,
-                    "window_seconds": limiter.window_seconds,
-                },
-                headers={
-                    "Retry-After": str(retry_after),
-                    "X-RateLimit-Limit": str(limiter.max_requests),
-                    "X-RateLimit-Remaining": "0",
-                    "X-RateLimit-Reset": str(int(reset_time)) if reset_time else "",
-                }
-            )
-        
-        # Add rate limit headers to response
-        response = await call_next(request)
-        remaining = limiter.get_remaining(limit_key)
-        reset_time = limiter.get_reset_time(limit_key)
-        
-        response.headers["X-RateLimit-Limit"] = str(limiter.max_requests)
-        response.headers["X-RateLimit-Remaining"] = str(remaining)
-        if reset_time:
-            response.headers["X-RateLimit-Reset"] = str(int(reset_time))
-        
-        return response
-    
-    # === CSRF Validation Middleware ===
-    @app.middleware("http")
-    async def csrf_validation(request: Request, call_next):
-        """Validate CSRF tokens for state-changing requests."""
-        # Skip CSRF for safe methods
-        if request.method in ("GET", "HEAD", "OPTIONS"):
-            return await call_next(request)
-        
-        # Skip if session middleware is not installed or hasn't run yet
-        if "session" not in request.scope:
-            return await call_next(request)
-            
-        # Skip CSRF for OAuth callback (uses state parameter instead)
-        if request.url.path in ("/oauth/callback", "/login", "/consent", "/consent/withdraw"):
-            return await call_next(request)
-        
-        # Skip CSRF for API endpoints
-        if request.url.path.startswith("/api/") or request.url.path.startswith("/admin/"):
-            return await call_next(request)
-            
-        # Skip CSRF for dashboard POSTs (forms don't have CSRF tokens yet)
-        if request.url.path.startswith("/dashboard/"):
-            return await call_next(request)
-        
-        # Validate CSRF token for other state-changing requests
-        session_token = request.session.get("csrf_token")
-        
-        # Get CSRF token from form data or header
-        form_token = None
-        if request.method == "POST":
-            try:
-                form_data = await request.form()
-                form_token = form_data.get("csrf_token")
-            except Exception:
-                pass
-        
-        header_token = request.headers.get("X-CSRF-Token")
-        incoming_token = form_token or header_token
-        
-        # Validate token
-        if not session_token or not incoming_token:
-            logger.warning(f"Missing CSRF token from {request.client.host} on {request.url.path}")
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Missing CSRF token. Please refresh the page and try again."
-            )
-        
-        if not secrets.compare_digest(session_token, incoming_token):
-            logger.warning(f"CSRF validation failed for {request.client.host} on {request.url.path}")
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Invalid CSRF token. Security validation failed."
-            )
-        
-        return await call_next(request)
-    
-    # === Request Logging Middleware ===
-    @app.middleware("http")
-    async def request_logging(request: Request, call_next):
-        """Log all requests for security auditing."""
-        start_time = time.time()
-        
-        # Process request
-        response = await call_next(request)
-        
-        # Calculate duration
-        duration = time.time() - start_time
-        
-        # Define paths that are usually noisy
-        is_noisy_path = (
-            request.url.path.startswith("/static") or 
-            request.url.path == "/health" or 
-            request.url.path in ("/docs", "/redoc", "/openapi.json")
-        )
-        
-        # Only ignore these paths if the request was successful (200 OK)
-        # If it fails (e.g., 500, 503, 404), we WANT to see it in the logs
-        should_ignore = is_noisy_path and response.status_code == 200
-        
-        if not should_ignore:
-            logger.info(
-                f"{request.method} {request.url.path} - "
-                f"Status: {response.status_code} - "
-                f"IP: {request.client.host} - "
-                f"Duration: {duration:.3f}s"
-            )
-        
-        return response
-    
-    logger.info("✅ Security middleware configured")
-    logger.info(f"   Rate limits: OAuth={_oauth_rate_limiter.max_requests}/min, "
-                f"API={_api_rate_limiter.max_requests}/min, "
-                f"General={_general_rate_limiter.max_requests}/min")
-
-
 # ============================================================================
 # CSRF TOKEN UTILITIES
 # ============================================================================
 
-def generate_csrf_token() -> str:
+def get_or_generate_csrf_token(request: Request) -> str:
     """
-    Generate a cryptographically secure CSRF token.
-    
-    Returns:
-        URL-safe base64-encoded token (43 characters)
+    Retrieves the CSRF token from the session, or generates a new one if it doesn't exist.
+    This ensures the token persists across page loads for the same user session.
     """
-    return secrets.token_urlsafe(32)
+    if "csrf_token" not in request.session:
+        request.session["csrf_token"] = secrets.token_urlsafe(32)
+    return request.session["csrf_token"]
 
 
 def validate_csrf_token(session_token: str, incoming_token: str) -> bool:
@@ -517,3 +320,178 @@ def get_rate_limiter_stats() -> dict:
         "general": _general_rate_limiter.get_stats(),
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
+
+
+
+def setup_security(app: FastAPI):
+    """
+    Configure security middleware. MUST be called before app starts.
+    """
+    settings = get_settings()
+    
+        # === Security Headers Middleware ===
+    @app.middleware("http")
+    async def add_security_headers(request: Request, call_next):
+        """Add security headers to all responses."""
+        response = await call_next(request)
+        
+        # Standard security headers
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        
+        # FIXED: Content Security Policy
+        # - Allows Font Awesome (cdn.jsdelivr.net, use.fontawesome.com)
+        # - Allows Chart.js (cdn.jsdelivr.net)
+        # - Allows inline JS and CSS (required for your onclick handlers and Jinja styles)
+        csp = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://use.fontawesome.com; "
+            "font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net https://use.fontawesome.com; "
+            "img-src 'self' data: blob:; "
+            "connect-src 'self';"
+        )
+        response.headers["Content-Security-Policy"] = csp
+        
+        # HSTS (HTTPS enforcement) - Only in production
+        if settings.environment == "production":
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        
+        # Prevent caching of sensitive endpoints
+        if request.url.path.startswith("/api/tokens") or request.url.path.startswith("/admin"):
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+        
+        return response
+    
+    # === Rate Limiting Middleware ===
+    @app.middleware("http")
+    async def rate_limit_middleware(request: Request, call_next):
+        """Apply rate limiting based on endpoint type."""
+        if request.url.path.startswith("/static") or request.url.path == "/health":
+            return await call_next(request)
+        
+        # FIXED: Use get_client_ip to handle reverse proxies correctly
+        client_ip = get_client_ip(request) 
+        
+        if request.url.path in ("/login", "/oauth/callback"):
+            limiter = _oauth_rate_limiter
+            limit_key = f"oauth:{client_ip}"
+        elif request.url.path.startswith("/api/"):
+            limiter = _api_rate_limiter
+            limit_key = f"api:{client_ip}"
+        else:
+            limiter = _general_rate_limiter
+            limit_key = f"general:{client_ip}"
+        
+        if not limiter.is_allowed(limit_key):
+            reset_time = limiter.get_reset_time(limit_key)
+            retry_after = int(reset_time - time.time()) if reset_time else limiter.window_seconds
+            
+            logger.warning(f"Rate limit exceeded for {client_ip} on {request.url.path}")
+            
+            return JSONResponse(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                content={"detail": "Too many requests. Please try again later."},
+                headers={
+                    "Retry-After": str(retry_after),
+                    "X-RateLimit-Limit": str(limiter.max_requests),
+                    "X-RateLimit-Remaining": "0",
+                }
+            )
+        
+        response = await call_next(request)
+        remaining = limiter.get_remaining(limit_key)
+        reset_time = limiter.get_reset_time(limit_key)
+        
+        response.headers["X-RateLimit-Limit"] = str(limiter.max_requests)
+        response.headers["X-RateLimit-Remaining"] = str(remaining)
+        if reset_time:
+            response.headers["X-RateLimit-Reset"] = str(int(reset_time))
+        
+        return response
+    
+    # === CSRF Validation Middleware ===
+    @app.middleware("http")
+    async def csrf_validation(request: Request, call_next):
+        """Validate CSRF tokens for state-changing requests."""
+
+        if "session" in request.scope and "csrf_token" not in request.session:
+            request.session["csrf_token"] = secrets.token_urlsafe(32)
+
+        if request.method in ("GET", "HEAD", "OPTIONS"):
+            return await call_next(request)
+        
+        if "session" not in request.scope:
+            return await call_next(request)
+            
+        # FIXED: Removed /consent and /consent/withdraw from this skip list
+        if request.url.path in ("/oauth/callback", "/login"):
+            return await call_next(request)
+        
+        if request.url.path.startswith("/api/") or request.url.path.startswith("/admin/"):
+            return await call_next(request)
+        
+        session_token = request.session.get("csrf_token")
+        
+        # Get CSRF token from form data or header
+        form_token = None
+        if request.method == "POST":
+            try:
+                # FIX: Parse the form and cache it in request.state
+                form_data = await request.form()
+                request.state.form_data = form_data
+                form_token = form_data.get("csrf_token")
+            except Exception as e:
+                logger.debug(f"Could not parse form in CSRF middleware: {e}")
+                pass
+        
+        header_token = request.headers.get("X-CSRF-Token")
+        incoming_token = form_token or header_token
+        
+        if not session_token or not incoming_token:
+            logger.warning(f"Missing CSRF token from {get_client_ip(request)} on {request.url.path}")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Missing CSRF token."
+            )
+        
+        if not secrets.compare_digest(session_token, incoming_token):
+            logger.warning(f"CSRF validation failed for {get_client_ip(request)} on {request.url.path}")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Invalid CSRF token."
+            )
+        
+        return await call_next(request)
+    
+    # === Request Logging Middleware ===
+    @app.middleware("http")
+    async def request_logging(request: Request, call_next):
+        """Log all requests for security auditing."""
+        start_time = time.time()
+        response = await call_next(request)
+        duration = time.time() - start_time
+        
+        is_noisy_path = (
+            request.url.path.startswith("/static") or 
+            request.url.path == "/health" or 
+            request.url.path in ("/docs", "/redoc", "/openapi.json")
+        )
+        
+        should_ignore = is_noisy_path and response.status_code == 200
+        
+        if not should_ignore:
+            # FIXED: Use get_client_ip to log the real user IP
+            logger.info(
+                f"{request.method} {request.url.path} - "
+                f"Status: {response.status_code} - "
+                f"IP: {get_client_ip(request)} - "
+                f"Duration: {duration:.3f}s"
+            )
+        
+        return response
+    
+    logger.info("✅ Security middleware configured")

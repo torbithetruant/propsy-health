@@ -106,9 +106,11 @@
         </div>
         <div class="btn-group" style="display: flex; gap: 12px; justify-content: flex-end;">
             <button class="btn btn-outline" onclick="hideModal('withdraw-modal')">{{ t('cancel') }}</button>
-            <form action="/dashboard/withdraw" method="POST" style="display:inline;">
-                <button type="submit" class="btn" style="background: #dc2626; color: white;">{{ t('confirm_withdrawal') }}</button>
-            </form>
+            
+            <!-- Replaced the POST form with a simple GET link -->
+            <a href="/dashboard/withdraw" class="btn" style="background: #dc2626; color: white; text-decoration: none;">
+                {{ t('confirm_withdrawal') }}
+            </a>
         </div>
     </div>
 </div>
@@ -139,52 +141,80 @@
         progressUI.style.display = 'block';
         progressBar.style.width = '0%';
         progressText.innerText = t_js.initializing;
+        progressText.style.color = ''; // Reset color in case of previous error
+
+        // Grab CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
         try {
             // 2. Trigger the sync process
-            const syncResponse = await fetch('/dashboard/sync-data', { method: 'POST' });
+            // FIX: Changed 'X-CSRFToken' to 'X-CSRF-Token' to match Python middleware
+            const syncResponse = await fetch('/dashboard/sync-data', { 
+                method: 'POST', 
+                headers: { 'X-CSRF-Token': csrfToken } 
+            });
+            
             if (!syncResponse.ok) throw new Error('Failed to start sync');
 
             // 3. Start polling for progress
             syncInterval = setInterval(async () => {
-                const progressRes = await fetch('/dashboard/sync-progress');
-                const data = await progressRes.json();
+                try {
+                    const progressRes = await fetch('/dashboard/sync-progress');
+                    
+                    // IMPROVEMENT: Check if the backend returned an error during polling
+                    if (!progressRes.ok) {
+                        throw new Error('Server error while checking progress');
+                    }
 
-                // Update UI
-                const percent = data.total > 0 ? (data.current / data.total) * 100 : 100;
-                progressBar.style.width = `${percent}%`;
-                progressText.innerText = `${t_js.syncing_progress} ${data.current}/${data.total}`;
+                    const data = await progressRes.json();
 
-                // 4. Check if done
-                if (data.done) {
-                    clearInterval(syncInterval);
-                    progressText.innerText = t_js.sync_complete_preparing;
-                    progressBar.style.width = '100%';
-                    progressBar.style.background = '#10b981'; // Green for success
+                    // Update UI
+                    const percent = data.total > 0 ? (data.current / data.total) * 100 : 100;
+                    progressBar.style.width = `${percent}%`;
+                    progressText.innerText = `${t_js.syncing_progress} ${data.current}/${data.total}`;
 
-                    // 5. Trigger actual file download
-                    setTimeout(() => {
-                        window.location.href = '/dashboard/download-data';
-                        
-                        // Reset button after a delay
+                    // 4. Check if done
+                    if (data.done) {
+                        clearInterval(syncInterval);
+                        progressText.innerText = t_js.sync_complete_preparing;
+                        progressBar.style.width = '100%';
+                        progressBar.style.background = '#10b981'; // Green for success
+
+                        // 5. Trigger actual file download
                         setTimeout(() => {
-                            btn.disabled = false;
-                            btn.innerHTML = `<i class="fa-solid fa-file-arrow-down" style="margin-right: 8px;"></i> ${t_js.export_json_data}`;
-                            progressUI.style.display = 'none';
-                            progressBar.style.background = 'var(--primary)';
-                        }, 3000);
-                    }, 1000);
+                            // This triggers the GET request which returns the StreamingResponse
+                            window.location.href = '/dashboard/download-data'; 
+                            
+                            // Reset button after a delay
+                            setTimeout(() => {
+                                btn.disabled = false;
+                                btn.innerHTML = `<i class="fa-solid fa-file-arrow-down" style="margin-right: 8px;"></i> ${t_js.export_json_data}`;
+                                progressUI.style.display = 'none';
+                                progressBar.style.background = 'var(--primary)';
+                            }, 3000);
+                        }, 1000);
+                    }
+                } catch (pollError) {
+                    // If polling fails, stop the interval and show error
+                    clearInterval(syncInterval);
+                    throw pollError; 
                 }
             }, 1000); // Poll every 1 second
 
         } catch (error) {
             console.error(error);
-            progressText.innerText = t_js.error_sync;
+            if (syncInterval) clearInterval(syncInterval); // Ensure interval is cleared on error
+            
+            progressText.innerText = `${t_js.error_sync} (${error.message})`;
             progressText.style.color = '#dc2626';
+            progressBar.style.background = '#ef4444'; // Red bar for error
+            
             btn.disabled = false;
             btn.innerHTML = `<i class="fa-solid fa-rotate-right" style="margin-right: 8px;"></i> ${t_js.retry}`;
         }
     }
+
+    // Modal controls
     function showModal(id) { 
         document.getElementById(id).classList.add('active'); 
     }
