@@ -7,7 +7,7 @@
     
     <!-- Header -->
     <div style="margin-bottom: 32px;">
-        <h1 style="font-size: 2rem; font-weight: 700; color: var(--text-main);">⛔ {{ t('withdraw_from_study') }}</h1>
+        <h1 style="font-size: 2rem; font-weight: 700; color: var(--text-main);"><i class="fa-solid fa-triangle-exclamation"></i> {{ t('withdraw_from_study') }}</h1>
         <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.6;">
             {{ t('withdraw_sorry_to_see_you_go') }}
         </p>
@@ -16,7 +16,7 @@
     <!-- Instructions Card -->
     <div class="card" style="margin-bottom: 24px;">
         <h3 style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-            📧 {{ t('how_to_withdraw') }}
+            <i class="fa-solid fa-envelope"></i> {{ t('how_to_withdraw') }}
         </h3>
         <p style="color: var(--text-muted); margin-bottom: 16px; line-height: 1.6;">
             {{ t('withdraw_please_send_email') }} 
@@ -40,10 +40,10 @@
     <!-- Action Buttons -->
     <div style="display: flex; gap: 12px; flex-wrap: wrap;">
         <a href="mailto:random@gmail.com?subject=Request%20to%20Withdraw%20from%20Study%20-%20{{ legacy_id }}&body=Hello,%0A%0AI would like to withdraw from the Propsy Health research study.%0A%0AMy Legacy ID: {{ legacy_id }}%0AMy Health ID: {{ health_id }}%0A%0AReason: %0A%0AThank you." class="btn btn-primary">
-            ✉️ {{ t('send_withdrawal_email') }}
+            <i class="fa-solid fa-envelope"></i> {{ t('send_withdrawal_email') }}
         </a>
         <a href="/dashboard" class="btn btn-outline">
-            ← {{ t('back_to_dashboard') }}
+            <i class="fa-solid fa-arrow-left"></i> {{ t('back_to_dashboard') }}
         </a>
     </div>
 

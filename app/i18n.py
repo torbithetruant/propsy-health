@@ -37,6 +37,7 @@ translations = {
         "questions_desc": "Whether you have questions about the research study, your data privacy, or technical issues, our team is ready to assist you.",
         "contact_research_team": "Contact Research Team",
         "read_privacy_policy": "Read Privacy Policy",
+        "read_terms_of_service": "Read Terms of Service",
         "privacy_policy": "Privacy Policy",
         "last_updated": "Last Updated",
         "privacy_last_updated_date": "June 23, 2026",
@@ -302,6 +303,50 @@ translations = {
         "sync_complete_preparing": "Sync Complete! Preparing download...",
         "error_sync": "Error during sync. Please try again.",
         "retry": "Retry",
+
+        "terms": "Terms",
+        "terms_of_service": "Terms of Service",
+        "terms_intro": "Welcome to Propsy Health. By using our platform, you agree to abide by the following terms and conditions. Please read this document carefully before using our services.",
+        "terms_acceptance_title": "1. Acceptance of Terms",
+        "terms_acceptance_desc": "By accessing or using Propsy Health, you agree to be bound by these Terms. If you do not agree, do not use the service.",
+        
+        "terms_description_title": "2. Description of Service",
+        "terms_description_intro": "Propsy Health is a health data synchronization platform that:",
+        "terms_desc_item_1": "Connects to your Google Health account via OAuth 2.0",
+        "terms_desc_item_2": "Reads daily fitness, sleep, and heart rate metrics",
+        "terms_desc_item_3": "Stores this data in an encrypted database",
+        "terms_desc_item_4": "Provides a personal dashboard for visualization",
+        "terms_desc_item_5": "Allows you to export or delete your data at any time",
+        "terms_important_notice": "Important: This service is NOT a medical device and does not provide medical advice.",
+        
+        "terms_responsibilities_title": "3. User Responsibilities",
+        "terms_resp_item_1": "You must be at least 18 years old to use this service.",
+        "terms_resp_item_2": "You are responsible for maintaining the security of your Google account.",
+        "terms_resp_item_3": "You must not attempt to reverse-engineer or abuse the platform.",
+        "terms_resp_item_4": "You acknowledge that health data may be emotionally sensitive.",
+        
+        "terms_ownership_title": "4. Data Ownership & Your Rights",
+        "terms_ownership_desc": "You own your data. Propsy Health claims no ownership over your health information. You have the right to:",
+        "terms_rights_item_1": "Access all data we have collected (via JSON export)",
+        "terms_rights_item_2": "Correct any inaccurate information",
+        "terms_rights_item_3": "Delete your data at any time",
+        "terms_rights_item_4": "Revoke our access via your Google Account settings",
+        
+        "terms_liability_title": "5. Limitation of Liability",
+        "terms_liability_desc": "Propsy Health is provided \"as is\" without warranties. We are not liable for:",
+        "terms_liability_item_1": "Any medical decisions made based on the dashboard data",
+        "terms_liability_item_2": "Service interruptions or data loss due to technical issues",
+        "terms_liability_item_3": "Emotional distress from viewing health metrics",
+        
+        "terms_termination_title": "6. Termination",
+        "terms_termination_desc": "You may terminate your use of Propsy Health at any time by clicking \"Disconnect\" in your dashboard. Upon termination, all your data is permanently deleted within 30 days.",
+        
+        "terms_changes_title": "7. Changes to These Terms",
+        "terms_changes_desc": "We may update these Terms periodically. Users will be notified of material changes via an in-app notification requiring re-acceptance.",
+        
+        "terms_contact_title": "8. Contact",
+        "terms_contact_desc": "For questions about these Terms, contact: ",
+        "terms_back_to_home": "Back to Homepage",
     },
     "fr": {
         "propsy_health": "Propsy Health",
@@ -339,6 +384,7 @@ translations = {
         "questions_desc": "Que vous ayez des questions sur l'étude de recherche, la confidentialité de vos données ou des problèmes techniques, notre équipe est prête à vous assister.",
         "contact_research_team": "Contacter l'Équipe de Recherche",
         "read_privacy_policy": "Lire la Politique de Confidentialité",
+        "read_terms_of_service": "Lire les Conditions d'Utilisation",
         "privacy_policy": "Politique de Confidentialité",
         "last_updated": "Dernière Mise à Jour",
         "privacy_last_updated_date": "23 Juin 2026",
@@ -391,7 +437,7 @@ translations = {
         "dashboard": "Tableau de Bord",
         "my_data": "Mes Données",
         "privacy": "Confidentialité",
-        "contact": "Contactez-Nous",
+        "contact": "Contacts",
         "sign_out": "Déconnexion",
         "sign_in_with_google": "Se connecter avec Google",
         "language": "Langue ",
@@ -604,6 +650,50 @@ translations = {
         "sync_complete_preparing": "Synchronisation terminée ! Préparation du téléchargement...",
         "error_sync": "Erreur lors de la synchronisation. Veuillez réessayer.",
         "retry": "Réessayer",
+
+        "terms": "CGU",
+        "terms_of_service": "Conditions d'Utilisation",
+        "terms_intro": "Bienvenue chez Propsy Health. En utilisant notre plateforme, vous acceptez de respecter les termes et conditions suivants. Veuillez lire attentivement ce document avant d'utiliser nos services.",
+        "terms_acceptance_title": "1. Acceptation des Conditions",
+        "terms_acceptance_desc": "En accédant ou en utilisant Propsy Health, vous acceptez d'être lié par ces Conditions. Si vous n'êtes pas d'accord, n'utilisez pas le service.",
+        
+        "terms_description_title": "2. Description du Service",
+        "terms_description_intro": "Propsy Health est une plateforme de synchronisation de données de santé qui :",
+        "terms_desc_item_1": "Se connecte à votre compte Google Health via OAuth 2.0",
+        "terms_desc_item_2": "Lit les métriques quotidiennes de fitness, de sommeil et de fréquence cardiaque",
+        "terms_desc_item_3": "Stocke ces données dans une base de données chiffrée",
+        "terms_desc_item_4": "Fournit un tableau de bord personnel pour la visualisation",
+        "terms_desc_item_5": "Vous permet d'exporter ou de supprimer vos données à tout moment",
+        "terms_important_notice": "Important : Ce service N'EST PAS un dispositif médical et ne fournit pas de conseils médicaux.",
+        
+        "terms_responsibilities_title": "3. Responsabilités de l'Utilisateur",
+        "terms_resp_item_1": "Vous devez avoir au moins 18 ans pour utiliser ce service.",
+        "terms_resp_item_2": "Vous êtes responsable du maintien de la sécurité de votre compte Google.",
+        "terms_resp_item_3": "Vous ne devez pas tenter de rétro-ingénierie ou d'abuser de la plateforme.",
+        "terms_resp_item_4": "Vous reconnaissez que les données de santé peuvent être émotionnellement sensibles.",
+        
+        "terms_ownership_title": "4. Propriété des Données et Vos Droits",
+        "terms_ownership_desc": "Vous êtes propriétaire de vos données. Propsy Health ne revendique aucune propriété sur vos informations de santé. Vous avez le droit de :",
+        "terms_rights_item_1": "Accéder à toutes les données que nous avons collectées (via export JSON)",
+        "terms_rights_item_2": "Corriger toute information inexacte",
+        "terms_rights_item_3": "Supprimer vos données à tout moment",
+        "terms_rights_item_4": "Révoquer notre accès via les paramètres de votre compte Google",
+        
+        "terms_liability_title": "5. Limitation de Responsabilité",
+        "terms_liability_desc": "Propsy Health est fourni « tel quel » sans garanties. Nous ne sommes pas responsables de :",
+        "terms_liability_item_1": "Toute décision médicale prise sur la base des données du tableau de bord",
+        "terms_liability_item_2": "Interruptions de service ou perte de données dues à des problèmes techniques",
+        "terms_liability_item_3": "Détresse émotionnelle liée à la visualisation des métriques de santé",
+        
+        "terms_termination_title": "6. Résiliation",
+        "terms_termination_desc": "Vous pouvez résilier votre utilisation de Propsy Health à tout moment en cliquant sur « Déconnecter » dans votre tableau de bord. À la résiliation, toutes vos données sont définitivement supprimées dans un délai de 30 jours.",
+        
+        "terms_changes_title": "7. Modifications de ces Conditions",
+        "terms_changes_desc": "Nous pouvons mettre à jour ces Conditions périodiquement. Les utilisateurs seront informés des modifications importantes via une notification dans l'application nécessitant une ré-acceptation.",
+        
+        "terms_contact_title": "8. Contact",
+        "terms_contact_desc": "Pour toute question concernant ces Conditions, contactez : ",
+        "terms_back_to_home": "Retour à l'Accueil",
     }
 }
 

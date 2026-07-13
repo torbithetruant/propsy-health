@@ -18,8 +18,8 @@
     <nav class="navbar">
         <div class="navbar-container">
             <a href="/" class="navbar-brand">
-                <!-- Brand Icon: Heartbeat (Medical/Health) -->
-                <i class="fa-solid fa-heart-pulse logo" style="color: #667eea;"></i>
+                <!-- Brand Image Logo -->
+                <img src="/static/images/kanopsy.png" alt="Propsy Health Logo" style="height: 30px; width: auto; object-fit: contain; margin-right: 8px;">
                 <span>{{ t('propsy_health') }}</span>
             </a>
             
@@ -31,7 +31,7 @@
                 
                 {% if current_user and current_user.consent_given %}
                     <!-- Authenticated Links -->
-                     <li><a href="/dashboard" class="navbar-link {% if request.url.path == '/dashboard' %}active{% endif %}">
+                    <li><a href="/dashboard" class="navbar-link {% if request.url.path == '/dashboard' %}active{% endif %}">
                         <i class="fa-solid fa-chart-line"></i>  {{ t('dashboard') }}
                     </a></li>
                 {% elif current_user and not current_user.consent_given %}
@@ -39,10 +39,16 @@
                         <i class="fa-solid fa-signature"></i>  {{ t('consent_board') }}
                     </a></li>   
                 {% endif %}
-
+                
+                <!-- 
                 <li><a href="/privacy" class="navbar-link {% if request.url.path == '/privacy' %}active{% endif %}">
                     <i class="fa-solid fa-shield-halved"></i>  {{ t('privacy') }}
                 </a></li>
+
+                <li><a href="/terms" class="navbar-link {% if request.url.path == '/terms' %}active{% endif %}">
+                    <i class="fa-solid fa-file-contract"></i>  {{ t('terms') }}
+                </a></li>
+                -->
 
                 <li><a href="/contact" class="navbar-link {% if request.url.path == '/contact' %}active{% endif %}">
                     <i class="fa-solid fa-envelope"></i>  {{ t('contact') }}

@@ -8,7 +8,7 @@
         <!-- Header -->
         <div style="text-align: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 2px solid var(--border);">
             <h1 style="font-size: 2.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 12px;">
-                📜 Terms of Service
+                <i class="fa-solid fa-file-signature"></i> {{ t('terms_of_service') }}
             </h1>
             <p style="font-size: 0.95rem; color: var(--text-muted);">
                 Last Updated: June 23, 2026
@@ -17,122 +17,119 @@
         
         <div class="card" style="margin-bottom: 32px; background: #f8fafc; border: none;">
             <p style="font-size: 1.05rem; color: var(--text-main); line-height: 1.7;">
-                These Terms of Service ("Terms") govern your use of the Propsy Health platform. 
-                By connecting your Google account, you agree to these Terms.
+                {{ t('terms_intro') | safe }}
             </p>
         </div>
 
-        <!-- Section 1 -->
+                <!-- Section 1 -->
         <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
             <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                1. Acceptance of Terms
+                {{ t('terms_acceptance_title') }}
             </h2>
             <p style="color: var(--text-muted); line-height: 1.7;">
-                By accessing or using Propsy Health, you agree to be bound by these Terms. 
-                If you do not agree, do not use the service.
+                {{ t('terms_acceptance_desc') }}
             </p>
         </div>
 
         <!-- Section 2 -->
         <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
             <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                2. Description of Service
+                {{ t('terms_description_title') }}
             </h2>
             <p style="color: var(--text-muted); line-height: 1.7;">
-                Propsy Health is a health data synchronization platform that:
+                {{ t('terms_description_intro') }}
             </p>
             <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8; margin-top: 12px;">
-                <li>Connects to your Google Health account via OAuth 2.0</li>
-                <li>Reads daily fitness, sleep, and heart rate metrics</li>
-                <li>Stores this data in an encrypted database</li>
-                <li>Provides a personal dashboard for visualization</li>
-                <li>Allows you to export or delete your data at any time</li>
+                <li>{{ t('terms_desc_item_1') }}</li>
+                <li>{{ t('terms_desc_item_2') }}</li>
+                <li>{{ t('terms_desc_item_3') }}</li>
+                <li>{{ t('terms_desc_item_4') }}</li>
+                <li>{{ t('terms_desc_item_5') }}</li>
             </ul>
             <p style="color: var(--text-muted); line-height: 1.7; margin-top: 12px;">
-                <strong style="color: var(--text-main);">Important:</strong> This service is NOT a medical device and does not provide medical advice.
+                <strong style="color: var(--text-main);">{{ t('terms_important_notice') }}</strong>
             </p>
         </div>
 
         <!-- Section 3 -->
         <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
             <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                3. User Responsibilities
+                {{ t('terms_responsibilities_title') }}
             </h2>
             <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8;">
-                <li>You must be at least 18 years old to use this service.</li>
-                <li>You are responsible for maintaining the security of your Google account.</li>
-                <li>You must not attempt to reverse-engineer or abuse the platform.</li>
-                <li>You acknowledge that health data may be emotionally sensitive.</li>
+                <li>{{ t('terms_resp_item_1') }}</li>
+                <li>{{ t('terms_resp_item_2') }}</li>
+                <li>{{ t('terms_resp_item_3') }}</li>
+                <li>{{ t('terms_resp_item_4') }}</li>
             </ul>
         </div>
 
         <!-- Section 4 -->
         <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
             <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                4. Data Ownership & Your Rights
+                {{ t('terms_ownership_title') }}
             </h2>
             <p style="color: var(--text-muted); line-height: 1.7;">
-                <strong style="color: var(--text-main);">You own your data.</strong> Propsy Health claims no ownership over your health information. 
-                You have the right to:
+                <strong style="color: var(--text-main);">{{ t('terms_ownership_desc') }}</strong>
             </p>
             <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8; margin-top: 12px;">
-                <li>Access all data we have collected (via JSON export)</li>
-                <li>Correct any inaccurate information</li>
-                <li>Delete your data at any time</li>
-                <li>Revoke our access via your Google Account settings</li>
+                <li>{{ t('terms_rights_item_1') }}</li>
+                <li>{{ t('terms_rights_item_2') }}</li>
+                <li>{{ t('terms_rights_item_3') }}</li>
+                <li>{{ t('terms_rights_item_4') }}</li>
             </ul>
         </div>
 
         <!-- Section 5 -->
         <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
             <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                5. Limitation of Liability
+                {{ t('terms_liability_title') }}
             </h2>
             <p style="color: var(--text-muted); line-height: 1.7;">
-                Propsy Health is provided "as is" without warranties. We are not liable for:
+                {{ t('terms_liability_desc') }}
             </p>
             <ul style="padding-left: 20px; color: var(--text-muted); line-height: 1.8; margin-top: 12px;">
-                <li>Any medical decisions made based on the dashboard data</li>
-                <li>Service interruptions or data loss due to technical issues</li>
-                <li>Emotional distress from viewing health metrics</li>
+                <li>{{ t('terms_liability_item_1') }}</li>
+                <li>{{ t('terms_liability_item_2') }}</li>
+                <li>{{ t('terms_liability_item_3') }}</li>
             </ul>
         </div>
 
         <!-- Section 6 -->
         <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
             <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                6. Termination
+                {{ t('terms_termination_title') }}
             </h2>
             <p style="color: var(--text-muted); line-height: 1.7;">
-                You may terminate your use of Propsy Health at any time by clicking "Disconnect" in your dashboard. 
-                Upon termination, all your data is permanently deleted within 30 days.
+                {{ t('terms_termination_desc') }}
             </p>
         </div>
 
         <!-- Section 7 -->
         <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
             <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                7. Changes to These Terms
+                {{ t('terms_changes_title') }}
             </h2>
             <p style="color: var(--text-muted); line-height: 1.7;">
-                We may update these Terms periodically. Users will be notified of material changes 
-                via an in-app notification requiring re-acceptance.
+                {{ t('terms_changes_desc') }}
             </p>
         </div>
 
         <!-- Section 8 -->
         <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--primary);">
             <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-                8. Contact
+                {{ t('terms_contact_title') }}
             </h2>
             <p style="color: var(--text-muted); line-height: 1.7;">
-                For questions about these Terms, contact: 
+                {{ t('terms_contact_desc') }}
                 <a href="mailto:legal@your-domain.com" style="color: var(--primary);">legal@your-domain.com</a>
             </p>
         </div>
 
         <div style="text-align: center; margin-top: 32px;">
-            <a href="/" class="btn btn-outline">← Back to Homepage</a>
+            <a href="/" class="btn btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> {{ t('terms_back_to_home') }}
+            </a>
         </div>
         
     </div>
